@@ -1,0 +1,435 @@
+
+/* =====================================
+   GLOBAL RESPONSIVE - ALL PAGES
+===================================== */
+
+/* ปรับขนาดทุกองค์ประกอบให้คำนวณตรงกัน */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+html {
+    width: 100%;
+    min-height: 100%;
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+}
+
+body {
+    width: 100%;
+    min-width: 320px;
+    min-height: 100vh;
+    margin: 0;
+    overflow-x: hidden;
+}
+
+/* รูปภาพและสื่อ */
+img,
+video,
+iframe {
+    max-width: 100%;
+}
+
+img {
+    height: auto;
+}
+
+/* ป้องกันข้อความยาวเกินพื้นที่ */
+h1, h2, h3, h4, p, span, a, td, th {
+    overflow-wrap: anywhere;
+}
+
+/* =====================================
+   CONTAINER
+===================================== */
+
+.container,
+.main-content,
+.page-container,
+.content,
+.dashboard-container,
+.booking-container,
+.history-container,
+.admin-container,
+main {
+    width: min(100% - 48px, 1440px);
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* ป้องกันองค์ประกอบล้นหน้าจอ */
+section,
+article,
+.card,
+.room-card,
+.stat-card,
+.quick-card {
+    min-width: 0;
+    max-width: 100%;
+}
+
+/* =====================================
+   NAVBAR / HEADER
+===================================== */
+
+.navbar,
+.nav-bar,
+.nav-container,
+.header-container,
+header .container {
+    max-width: 100%;
+}
+
+.navbar,
+.nav-bar,
+.nav-container {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.navbar img,
+.nav-bar img,
+.nav-container img {
+    max-width: 100%;
+    object-fit: contain;
+}
+
+nav a {
+    white-space: nowrap;
+}
+
+/* =====================================
+   GRID / CARDS
+===================================== */
+
+.room-grid,
+.rooms-grid,
+.dashboard-grid,
+.quick-actions,
+.stats-grid,
+.overview-grid,
+.card-grid,
+.user-grid {
+    display: grid;
+    grid-template-columns:
+        repeat(3, minmax(0, 1fr));
+    gap: 20px;
+    width: 100%;
+}
+
+.room-card,
+.stat-card,
+.quick-card,
+.card {
+    min-width: 0;
+}
+
+/* ปุ่มไม่ควรล้นการ์ด */
+button,
+input,
+select,
+textarea {
+    max-width: 100%;
+    font: inherit;
+}
+
+button {
+    cursor: pointer;
+}
+
+/* =====================================
+   FORMS
+===================================== */
+
+form {
+    width: 100%;
+    max-width: 100%;
+}
+
+input,
+select,
+textarea {
+    width: 100%;
+    min-width: 0;
+}
+
+.form-container,
+.login-container,
+.register-container,
+.login-box,
+.register-box {
+    width: min(100%, 480px);
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* =====================================
+   TABLES
+===================================== */
+
+.table-wrapper,
+.table-container,
+.table-responsive {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th,
+td {
+    vertical-align: middle;
+}
+
+/* =====================================
+   LAPTOP / MAC
+   768px - 1199px
+===================================== */
+
+@media (max-width: 1199px) {
+    .container,
+    .main-content,
+    .page-container,
+    .content,
+    .dashboard-container,
+    .booking-container,
+    .history-container,
+    .admin-container,
+    main {
+        width: calc(100% - 40px);
+    }
+
+    .room-grid,
+    .rooms-grid,
+    .dashboard-grid,
+    .quick-actions,
+    .stats-grid,
+    .overview-grid,
+    .card-grid,
+    .user-grid {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+        gap: 16px;
+    }
+}
+
+/* =====================================
+   TABLET
+   481px - 767px
+===================================== */
+
+@media (max-width: 767px) {
+    .container,
+    .main-content,
+    .page-container,
+    .content,
+    .dashboard-container,
+    .booking-container,
+    .history-container,
+    .admin-container,
+    main {
+        width: calc(100% - 32px);
+    }
+
+    .room-grid,
+    .rooms-grid,
+    .dashboard-grid,
+    .quick-actions,
+    .stats-grid,
+    .overview-grid,
+    .card-grid,
+    .user-grid {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 14px;
+    }
+
+    h1 {
+        font-size: clamp(1.5rem, 5vw, 2rem);
+    }
+
+    h2 {
+        font-size: clamp(1.25rem, 4vw, 1.6rem);
+    }
+
+    .navbar,
+    .nav-bar,
+    .nav-container {
+        justify-content: center;
+    }
+
+    .form-container,
+    .login-container,
+    .register-container,
+    .login-box,
+    .register-box {
+        width: 100%;
+    }
+
+    .table-wrapper table,
+    .table-container table,
+    .table-responsive table {
+        min-width: 600px;
+    }
+}
+
+/* =====================================
+   MOBILE
+   320px - 480px
+===================================== */
+
+@media (max-width: 480px) {
+    .container,
+    .main-content,
+    .page-container,
+    .content,
+    .dashboard-container,
+    .booking-container,
+    .history-container,
+    .admin-container,
+    main {
+        width: calc(100% - 24px);
+    }
+
+    body {
+        font-size: 14px;
+    }
+
+    h1 {
+        font-size: 1.4rem;
+    }
+
+    h2 {
+        font-size: 1.2rem;
+    }
+
+    h3 {
+        font-size: 1rem;
+    }
+
+    .room-grid,
+    .rooms-grid,
+    .dashboard-grid,
+    .quick-actions,
+    .stats-grid,
+    .overview-grid,
+    .card-grid,
+    .user-grid {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 12px;
+    }
+
+    .navbar,
+    .nav-bar,
+    .nav-container {
+        gap: 8px;
+    }
+
+    .navbar a,
+    .nav-bar a,
+    .nav-container a {
+        font-size: 13px;
+    }
+
+    button {
+        min-height: 36px;
+    }
+
+    .table-wrapper table,
+    .table-container table,
+    .table-responsive table {
+        min-width: 540px;
+    }
+
+    .form-container,
+    .login-container,
+    .register-container,
+    .login-box,
+    .register-box {
+        padding: 16px;
+    }
+}
+
+/* =====================================
+   REDUCED MOTION
+===================================== */
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        scroll-behavior: auto !important;
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+
+/* =====================================
+   CENTER NAVBAR MENU
+===================================== */
+
+/* Desktop และ Laptop */
+@media (min-width: 901px) {
+
+    /* กำหนดจุดอ้างอิงของเมนู */
+    header,
+    .navbar,
+    .nav-bar,
+    .nav-container {
+        position: relative;
+    }
+
+    /* จัดเมนูให้อยู่ตรงกลาง */
+    .nav-menu {
+        position: absolute !important;
+        left: 50% !important;
+        top: 50%;
+        transform: translate(-50%, -50%) !important;
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-wrap: nowrap;
+        gap: 10px;
+        white-space: nowrap;
+        z-index: 10;
+    }
+}
+
+/* Tablet */
+@media (max-width: 900px) {
+    .nav-menu {
+        position: static !important;
+        left: auto !important;
+        top: auto;
+        transform: none !important;
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 8px;
+        width: 100%;
+    }
+}
+
+/* Mobile */
+@media (max-width: 600px) {
+    .nav-menu {
+        gap: 5px;
+    }
+
+    .nav-menu .nav-item {
+        font-size: 12px;
+        padding: 8px;
+    }
+}

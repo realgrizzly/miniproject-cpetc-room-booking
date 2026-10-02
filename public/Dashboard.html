@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link rel="stylesheet" href="../CSS/Dashboard.css">
+    <link rel="stylesheet" href="../Layout/Responsive.css">
+</head>
+
+<body>
+
+    <!-- Background -->
+    <div class="background">
+        <div class="glow glow-1"></div>
+        <div class="glow glow-2"></div>
+        <div class="glow glow-3"></div>
+    </div>
+
+
+    <!-- ================= NAVBAR ================= -->
+
+    <header class="navbar">
+
+        <div class="nav-left">
+
+            <div class="nav-logos">
+                <img src="../src/images/Logo RMUTL.png" alt="RMUTL">
+                <img src="../src/images/CPETC LOGO.png" alt="CPETC">
+            </div>
+
+            <div class="nav-title">
+                <h2>ระบบจองห้องแผนกวิศวกรรมคอมพิวเตอร์</h2>
+                <span>RMUTL COMPUTER ENGINEER Online Room Booking</span>
+            </div>
+
+        </div>
+        
+        <nav class="nav-menu">
+            <a href="Dashboard.html" class="nav-item active"><i class="fa-solid fa-house"></i><span>หน้าหลัก</span></a>
+            <a href="Booking.html" class="nav-item"><i class="fa-solid fa-calendar-plus"></i><span>จองห้อง</span></a>
+            <a href="History.html" class="nav-item"><i class="fa-solid fa-clock-rotate-left"></i><span>ประวัติการจอง</span></a>
+            <a href="../ADMIN/admin.html" class="nav-item admin-nav" id="adminMenu" style="display: none;"><i class="fa-solid fa-shield-halved"></i><span>Admin</span></a>
+        </nav>
+
+
+        <div class="user-menu">
+            <div class="user-info">
+                <div class="user-avatar">
+                    <i class="fa-solid fa-user"></i>
+                </div>
+                
+                <div class="user-text">
+                    <span class="user-label" id="userRole">กำลังโหลด...</span>
+                    <strong id="userName">กำลังโหลด...</strong>
+                </div>
+            </div>
+            
+            <button id="logoutBtn" class="logout-button">
+                <i class="fa-solid fa-right-from-bracket"></i>
+                <span>ออกจากระบบ</span>
+            </button>
+        </div>
+    
+    </header>
+
+
+    <!-- ================= MAIN ================= -->
+
+    <main class="dashboard-container">
+
+        <!-- Welcome -->
+
+        <section class="welcome-section">
+            <div class="welcome-content">
+
+                <div class="welcome-icon">
+                    <i class="fa-solid fa-hand"></i>
+                </div>
+
+                <div>
+                    <span class="welcome-small">ยินดีต้อนรับกลับมา</span>
+
+                    <h1>สวัสดี, <span id="welcomeName">ผู้ใช้งาน</span></h1>
+                    <p>จัดการการจองห้องของคุณได้จากหน้านี้</p>
+                </div>
+
+            </div>
+        </section>
+
+
+        <!-- ================= QUICK ACTION ================= -->
+
+        <section class="section">
+            <div class="section-header">
+                <div>
+                    <span class="section-label">QUICK ACTION</span>
+
+                    <h2>การจัดการห้อง</h2>
+                </div>
+            </div>
+
+
+            <div class="action-grid">
+
+                <!-- Booking -->
+                <a href="Booking.html" class="action-card">
+                    
+                    <div class="action-icon orange">
+                        <i class="fa-solid fa-calendar-plus"></i>
+                    </div>
+
+                    <div class="action-content">
+                        <h3>จองห้อง</h3>
+                        <p>ค้นหาและจองห้องที่ต้องการ</p>
+                    </div>
+
+                    <i class="fa-solid fa-arrow-right action-arrow"></i>
+                </a>
+
+
+                <!-- History -->
+                <a href="History.html" class="action-card">
+
+                    <div class="action-icon brown">
+                        <i class="fa-solid fa-clock-rotate-left"></i>
+                    </div>
+
+                    <div class="action-content">
+                        <h3>ประวัติการจอง</h3>
+                        <p>ตรวจสอบรายการจองของคุณ</p>
+                    </div>
+
+                    <i class="fa-solid fa-arrow-right action-arrow"></i>
+                </a>
+
+
+                <!-- Profile -->
+                <a href="#profile" class="action-card">
+
+                    <div class="action-icon gold">
+                        <i class="fa-solid fa-user"></i>
+                    </div>
+
+                    <div class="action-content">
+                        <h3>ข้อมูลผู้ใช้งาน</h3>
+                        <p>ดูข้อมูลบัญชีของคุณ</p>
+                    </div>
+
+                    <i class="fa-solid fa-arrow-right action-arrow"></i>
+                </a>
+            </div>
+        </section>
+
+
+        <!-- ================= STATISTICS ================= -->
+
+        <section class="section">
+            <div class="section-header">
+
+                <div>
+                    <span class="section-label">OVERVIEW</span>
+                    <h2>ภาพรวมการจอง</h2>
+                </div>
+
+            </div>
+
+            <div class="stats-grid">
+
+                <!-- Total -->
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fa-solid fa-calendar-check"></i>
+                    </div>
+
+                    <div class="stat-info">
+                        <span>การจองทั้งหมด</span>
+                        <strong id="totalBookings">0</strong>
+                        <small>รายการ</small>
+                    </div>
+                </div>
+
+
+                <!-- Upcoming -->
+
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fa-solid fa-calendar-day"></i>
+                    </div>
+
+                    <div class="stat-info">
+                        <span>การจองที่กำลังจะมาถึง</span>
+                        <strong id="upcomingBookings">0</strong>
+                        <small>รายการ</small>
+                    </div>
+                </div>
+
+
+                <!-- Cancelled -->
+
+                <div class="stat-card">
+
+                    <div class="stat-icon">
+                        <i class="fa-solid fa-calendar-xmark"></i>
+                    </div>
+
+                    <div class="stat-info">
+                        <span>ยกเลิกแล้ว</span>
+                        <strong id="cancelledBookings">0</strong>
+                        <small>รายการ</small>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- ================= RECENT BOOKING ================= -->
+
+        <section class="section" id="history">
+
+            <div class="section-header">
+
+                <div>
+                    <span class="section-label">RECENT ACTIVITY</span>
+                    <h2>การจองล่าสุด</h2>
+                </div>
+
+                <a href="History.html" class="view-all">ดูทั้งหมด <i class="fa-solid fa-arrow-right"></i></a>
+            </div>
+
+
+            <div class="booking-card">
+
+                <div class="empty-state">
+                    <div class="empty-icon">
+                        <i class="fa-solid fa-calendar-xmark"></i>
+                    </div>
+                    
+                    <h3>ยังไม่มีประวัติการจอง</h3>
+                    <p>เมื่อคุณทำการจองห้อง รายการจองจะแสดงที่นี่</p>
+
+                    <a href="Booking.html" class="primary-button"><i class="fa-solid fa-calendar-plus"></i>จองห้องแรกของคุณ</a>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- ================= PROFILE ================= -->
+
+        <section class="section" id="profile">
+
+            <div class="section-header">
+
+                <div>
+                    <span class="section-label">ACCOUNT</span>
+                    <h2>ข้อมูลบัญชี</h2>
+                </div>
+            </div>
+
+
+            <div class="profile-card">
+                
+                <div class="profile-avatar">
+                    <i class="fa-solid fa-user"></i>
+                </div>
+
+
+                <div class="profile-details">
+                    <div class="profile-item">
+                        <span>ชื่อผู้ใช้งาน</span>
+                        <strong id="profileName">กำลังโหลด...</strong>
+                    </div>
+
+
+                    <div class="profile-item">
+                        <span>อีเมล</span>
+                        <strong id="profileEmail">กำลังโหลด...</strong>
+                    </div>
+
+
+                    <div class="profile-item">
+                        <span>ประเภทบัญชี</span>
+                        <strong id="profileRole">กำลังโหลด...</strong>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+    </main>
+
+
+    <!-- ================= FOOTER ================= -->
+
+    <footer class="dashboard-footer">
+        <div class="footer-logo">
+            <img src="../src/images/Logo RMUTL.png" alt="RMUTL">
+            <img src="../src/images/CPETC LOGO.png" alt="CPETC">
+        </div>
+
+        <p>© 2026 Project RMUTL Online Room Booking</p>
+        <span>ระบบจองห้องออนไลน์</span>
+    </footer>
+
+    <script type="module" src="../JS/Dashboard.js"></script>
+    <script type="module" src="../src/user/navbar-user.js"></script>
+
+</body>
+</html>

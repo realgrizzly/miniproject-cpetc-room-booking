@@ -1,0 +1,183 @@
+
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ประวัติการจอง | Room Booking</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link rel="stylesheet" href="../CSS/History.css">
+    <link rel="stylesheet" href="../Layout/Responsive.css">
+</head>
+
+<body>
+    <header class="navbar">
+        <div class="nav-left">
+            <div class="nav-logos">
+                <img src="../src/images/Logo RMUTL.png" alt="RMUTL">
+                <img src="../src/images/CPETC LOGO.png" alt="CPETC">
+            </div>
+
+            <div class="nav-title">
+                <h2>ระบบจองห้องแผนกวิศวกรรมคอมพิวเตอร์</h2>
+                <span>RMUTL COMPUTER ENGINEER Online Room Booking</span>
+            </div>
+        </div>
+
+        <nav class="nav-menu">
+            <a href="Dashboard.html" class="nav-item"><i class="fa-solid fa-house"></i>หน้าหลัก</a>
+            <a href="Booking.html" class="nav-item"><i class="fa-solid fa-calendar-plus"></i>จองห้อง</a>
+            <a href="History.html" class="nav-item active"><i class="fa-solid fa-clock-rotate-left"></i>ประวัติการจอง</a>
+            <a href="../ADMIN/admin.html" class="nav-item" id="adminMenu" style="display:none"><i class="fa-solid fa-shield-halved"></i>Admin</a>
+        </nav>
+
+        <div class="user-menu">
+            <div class="user-info">
+                <div class="user-avatar">
+                    <i class="fa-solid fa-user"></i>
+                </div>
+                
+                <div class="user-text">
+                    <span class="user-label" id="userRole">กำลังโหลด...</span>
+                    <strong id="userName">กำลังโหลด...</strong>
+                </div>
+            </div>
+            
+            <button id="logoutBtn" class="logout-button">
+                <i class="fa-solid fa-right-from-bracket"></i>
+                <span>ออกจากระบบ</span>
+            </button>
+        </div>
+    </header>
+
+    <main class="main-container">
+        <section class="page-heading">
+            <div>
+                <span class="eyebrow">ROOM BOOKING SYSTEM</span>
+                <h1>ประวัติการจอง</h1>
+                <p>ตรวจสอบรายการจองห้องและสถานะการจองของคุณ</p>
+            </div>
+
+            <a href="Booking.html" class="new-booking-button"><i class="fa-solid fa-plus"></i>จองห้องใหม่</a>
+        </section>
+
+        <!-- สรุปจำนวนการจอง -->
+        <section class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon total-icon">
+                    <i class="fa-solid fa-calendar-days"></i>
+                </div>
+
+                <div>
+                    <span>การจองทั้งหมด</span>
+                    <strong id="totalCount">0</strong>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon pending-icon">
+                    <i class="fa-solid fa-hourglass-half"></i>
+                </div>
+                <div>
+                    <span>รออนุมัติ</span>
+                    <strong id="pendingCount">0</strong>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon approved-icon">
+                    <i class="fa-solid fa-circle-check"></i>
+                </div>
+                <div>
+                    <span>อนุมัติแล้ว</span>
+                    <strong id="approvedCount">0</strong>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon rejected-icon">
+                    <i class="fa-solid fa-circle-xmark"></i>
+                </div>
+                <div>
+                    <span>ปฏิเสธ / ยกเลิก</span>
+                    <strong id="cancelledCount">0</strong>
+                </div>
+            </div>
+        </section>
+
+        <!-- ค้นหาและกรอง --> 
+        <section class="filter-card">
+            <div class="filter-heading">
+                <h2><i class="fa-solid fa-filter"></i> ค้นหาและกรองข้อมูล</h2>
+            </div>
+
+            <div class="filter-grid">
+                <div class="filter-group">
+                    <label for="searchInput">ค้นหาชื่อห้อง</label>
+                    <div class="search-box">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        <input type="text" id="searchInput"
+                               placeholder="พิมพ์ชื่อห้องที่ต้องการค้นหา">
+                    </div>
+                </div>
+
+                <div class="filter-group">
+                    <label for="statusFilter">สถานะการจอง</label>
+                    <select id="statusFilter">
+                        <option value="all">ทุกสถานะ</option>
+                        <option value="pending">รออนุมัติ</option>
+                        <option value="approved">อนุมัติแล้ว</option>
+                        <option value="rejected">ปฏิเสธ</option>
+                        <option value="cancelled">ยกเลิก</option>
+                    </select>
+                </div>
+
+                <button type="button" id="resetFilter" class="reset-button">
+                    <i class="fa-solid fa-rotate-left"></i>
+                    ล้างตัวกรอง
+                </button>
+            </div>
+        </section>
+
+        <!-- ตารางประวัติ -->
+        <section class="history-card">
+            <div class="history-heading">
+                <div>
+                    <h2>รายการจองของฉัน</h2>
+                    <p>รายการจองที่บันทึกไว้ในระบบ</p>
+                </div>
+                <span class="result-count" id="resultCount">0 รายการ</span>
+            </div>
+
+            <div class="table-wrapper">
+                <table class="history-table">
+                    <thead>
+                        <tr>
+                            <th>ห้อง</th>
+                            <th>วันที่จอง</th>
+                            <th>เวลา</th>
+                            <th>จำนวนคน</th>
+                            <th>สถานะ</th>
+                        </tr>
+                    </thead>
+                    <tbody id="historyTableBody">
+                        <tr>
+                            <td colspan="5" class="empty-cell">
+                                <i class="fa-solid fa-spinner fa-spin"></i>
+                                กำลังโหลดประวัติการจอง...
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+
+    <script type="module" src="../JS/History.js"></script>
+    <script type="module" src="../src/user/navbar-user.js"></script>
+</body>
+</html>

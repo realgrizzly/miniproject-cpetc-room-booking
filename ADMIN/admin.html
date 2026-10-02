@@ -1,0 +1,274 @@
+
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin | ระบบจองห้องออนไลน์</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link rel="stylesheet" href="../CSS/Admin.css">
+    <link rel="stylesheet" href="../Layout/Responsive.css">
+</head>
+
+<body>
+
+    <!-- HEADER -->
+    <header class="admin-header">
+
+        <div class="admin-left">
+            <div class="admin-logos">
+                <img src="../src/images/Logo RMUTL.png" alt="RMUTL">
+                <img src="../src/images/CPETC LOGO.png" alt="CPETC">
+            </div>
+
+            <div class="admin-brand">
+                <h2>ระบบจองห้องแผนกวิศวกรรมคอมพิวเตอร์</h2>
+                <span>RMUTL COMPUTER ENGINEER Online Room Booking</span>
+            </div>
+        </div>
+
+        <nav class="nav-menu">
+            <a href="../public/Dashboard.html" class="nav-link">
+                <i class="fa-solid fa-house"></i>
+                <span>หน้าหลัก</span>
+            </a>
+
+            <a href="../public/Booking.html" class="nav-link">
+                <i class="fa-solid fa-calendar-plus"></i>
+                <span>จองห้อง</span>
+            </a>
+
+            <a href="../public/History.html" class="nav-link">
+                <i class="fa-solid fa-clock-rotate-left"></i>
+                <span>ประวัติการจอง</span>
+            </a>
+
+            <a href="admin.html" class="nav-link active">
+                <i class="fa-solid fa-shield-halved"></i>
+                <span>Admin</span>
+            </a>
+        </nav>
+
+        <div class="admin-user">
+            <div class="admin-user-info">
+                <strong id="adminName">กำลังโหลด...</strong>
+                <span>ผู้ดูแลระบบ</span>
+            </div>
+
+            <button class="logout-button" id="logoutButton" type="button">
+                <i class="fa-solid fa-right-from-bracket"></i>
+                <span>ออกจากระบบ</span>
+            </button>
+        </div>
+
+    </header>
+
+
+    <!-- MAIN -->
+    <main class="admin-main">
+
+        <section class="page-title">
+            <span class="page-label">ADMIN PANEL</span>
+            <h1>จัดการระบบ</h1>
+            <p>จัดการห้องและบัญชีผู้ใช้งานในระบบจองห้องออนไลน์</p>
+        </section>
+
+
+        <!-- เพิ่มห้อง -->
+        <section class="admin-card room-form-card">
+
+            <div class="card-heading">
+                <div>
+                    <span class="section-label">ROOM MANAGEMENT</span>
+                    <h2>เพิ่มข้อมูลห้อง</h2>
+                    <p>กรอกข้อมูลห้องที่ต้องการเพิ่มหรือแก้ไข</p>
+                </div>
+                <div class="heading-icon">
+                    <i class="fa-solid fa-door-open"></i>
+                </div>
+            </div>
+
+            <div class="form-grid">
+
+                <div class="form-group">
+                    <label for="roomName">ชื่อห้อง</label>
+                    <input type="text" id="roomName" placeholder="เช่น CPE 613">
+                </div>
+
+                <div class="form-group">
+                    <label for="roomType">ประเภทห้อง</label>
+                    <select id="roomType">
+                        <option value="">เลือกประเภทห้อง</option>
+                        <option value="ห้องเรียน">ห้องเรียน</option>
+                        <option value="ห้องปฏิบัติการ">ห้องปฏิบัติการ</option>
+                        <option value="ห้องประชุม">ห้องประชุม</option>
+                        <option value="ห้องคอมพิวเตอร์">ห้องคอมพิวเตอร์</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="capacity">ความจุ (คน)</label>
+                    <input type="number" id="capacity" min="1" placeholder="จำนวนคน">
+                </div>
+
+                <div class="form-group">
+                    <label for="building">อาคาร</label>
+                    <input type="text" id="building" placeholder="เช่น อาคาร 6">
+                </div>
+
+                <div class="form-group full">
+                    <label for="equipment">อุปกรณ์ภายในห้อง</label>
+                    <textarea id="equipment"
+                              placeholder="เช่น Projector, Computer, Wi-Fi"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="status">สถานะ</label>
+                    <select id="status">
+                        <option value="available">พร้อมใช้งาน</option>
+                        <option value="unavailable">ไม่พร้อมใช้งาน</option>
+                    </select>
+                </div>
+
+            </div>
+
+            <div class="form-buttons">
+                <button class="btn btn-primary" id="saveRoomButton" type="button">
+                    <i class="fa-solid fa-plus"></i>
+                    เพิ่มห้อง
+                </button>
+
+                <button class="btn btn-secondary" id="clearRoomButton" type="button">
+                    <i class="fa-solid fa-rotate-left"></i>
+                    ล้างข้อมูล
+                </button>
+            </div>
+
+        </section>
+
+
+        <!-- รายการห้อง -->
+        <section class="admin-card room-list-card" id="roomSection">
+
+            <div class="section-header">
+                <div>
+                    <span class="section-label">ROOM LIST</span>
+                    <h2>รายการห้อง</h2>
+                </div>
+                <span class="count-badge" id="roomCount">0 ห้อง</span>
+            </div>
+
+            <div class="table-wrapper">
+                <table class="admin-table room-table">
+                    <thead>
+                        <tr>
+                            <th>ชื่อห้อง</th>
+                            <th>ประเภท</th>
+                            <th>ความจุ</th>
+                            <th>อาคาร</th>
+                            <th>สถานะ</th>
+                            <th>จัดการ</th>
+                        </tr>
+                    </thead>
+                    <tbody id="roomTableBody">
+                        <tr>
+                            <td colspan="6" class="empty-cell">
+                                กำลังโหลดข้อมูลห้อง...
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+        </section>
+
+
+        <!-- ผู้ดูแลระบบ -->
+        <section class="admin-card management-card" id="adminSection">
+
+            <div class="section-header">
+                <div>
+                    <span class="section-label">ADMIN ACCOUNTS</span>
+                    <h2>จัดการผู้ดูแลระบบ</h2>
+                </div>
+                <span class="count-badge" id="adminCount">0 คน</span>
+            </div>
+
+            <div class="table-wrapper">
+                <table class="admin-table user-table">
+                    <thead>
+                        <tr>
+                            <th>ชื่อ</th>
+                            <th>Email</th>
+                            <th>ประเภทบัญชี</th>
+                            <th>จัดการ</th>
+                        </tr>
+                    </thead>
+                    <tbody id="adminTableBody">
+                        <tr>
+                            <td colspan="4" class="empty-cell">กำลังโหลด...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+        </section>
+
+
+        <!-- ผู้ใช้งานทั่วไป -->
+        <section class="admin-card management-card" id="userSection">
+
+            <div class="section-header">
+                <div>
+                    <span class="section-label">USER ACCOUNTS</span>
+                    <h2>จัดการผู้ใช้งานทั่วไป</h2>
+                </div>
+                <span class="count-badge" id="userCount">0 คน</span>
+            </div>
+
+            <div class="search-box">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="search"
+                       id="userSearch"
+                       placeholder="ค้นหาชื่อหรืออีเมลผู้ใช้งาน...">
+            </div>
+
+            <div class="table-wrapper">
+                <table class="admin-table user-table">
+                    <thead>
+                        <tr>
+                            <th>ชื่อ</th>
+                            <th>Email</th>
+                            <th>ประเภทบัญชี</th>
+                            <th>จัดการ</th>
+                        </tr>
+                    </thead>
+                    <tbody id="userTableBody">
+                        <tr>
+                            <td colspan="4" class="empty-cell">กำลังโหลด...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <footer class="admin-footer">
+        <div class="footer-logos">
+            <img src="../src/images/Logo RMUTL.png" alt="RMUTL">
+            <img src="../src/images/CPETC LOGO.png" alt="CPETC">
+        </div>
+        <p>© 2026 RMUTL COMPUTER ENGINEER Online Room Booking</p>
+    </footer>
+
+    <script type="module" src="../JS/Admin.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>จองห้อง - ระบบจองห้องออนไลน์</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link rel="stylesheet" href="../CSS/Booking.css">
+    <link rel="stylesheet" href="../Layout/Responsive.css">
+</head>
+
+<body>
+
+    <!-- Background -->
+    <div class="background">
+        <div class="glow glow-1"></div>
+        <div class="glow glow-2"></div>
+        <div class="glow glow-3"></div>
+    </div>
+
+
+    <!-- ================= HEADER ================= -->
+
+    <header class="navbar">
+        <div class="nav-left">
+            <div class="nav-logo">
+                <img src="../src/images/Logo RMUTL.png" alt="RMUTL">
+                <img src="../src/images/CPETC LOGO.png" alt="CPETC">
+            </div>
+
+            <div class="nav-title">
+                <h2>ระบบจองห้องแผนกวิศวกรรมคอมพิวเตอร์</h2>
+                <span>RMUTL COMPUTER ENGINEER Online Room Booking</span>
+            </div>
+
+        </div>
+
+        <nav class="nav-menu">
+            <a href="Dashboard.html" class="nav-item"><i class="fa-solid fa-house"></i><span>หน้าหลัก</span></a>
+            <a href="Booking.html" class="nav-item active"><i class="fa-solid fa-calendar-plus"></i><span>จองห้อง</span></a>
+            <a href="History.html" class="nav-item"><i class="fa-solid fa-clock-rotate-left"></i><span>ประวัติการจอง</span></a>
+            <a href="../ADMIN/admin.html" class="nav-item admin-nav" id="adminMenu" style="display: none;"><i class="fa-solid fa-shield-halved"></i><span>Admin</span></a>
+        </nav>
+
+        <div class="user-menu">
+            <div class="user-info">
+                <div class="user-avatar">
+                    <i class="fa-solid fa-user"></i>
+                </div>
+                
+                <div class="user-text">
+                    <span class="user-label" id="userRole">กำลังโหลด...</span>
+                    <strong id="userName">กำลังโหลด...</strong>
+                </div>
+            </div>
+            
+            <button id="logoutBtn" class="logout-button">
+                <i class="fa-solid fa-right-from-bracket"></i>
+                <span>ออกจากระบบ</span>
+            </button>
+        </div>
+
+    </header>
+
+
+    <!-- ================= MAIN ================= -->
+
+    <main class="main-container">
+
+        <!-- Page Header -->
+        <section class="page-header">
+            <div>
+                <div class="breadcrumb">
+                    <span>หน้าหลัก</span>
+                    <i class="fa-solid fa-angle-right"></i>
+                    <strong>จองห้อง</strong>
+                </div>
+
+                <h1><i class="fa-solid fa-calendar-plus"></i>จองห้อง</h1>
+                <p>ค้นหาและเลือกห้องที่ต้องการจอง</p>
+            </div>
+        </section>
+
+
+        <!-- ================= BOOKING SEARCH ================= -->
+
+        <section class="booking-search-card">
+            <div class="section-title">
+                <div class="section-icon">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                </div>
+
+                <div>
+                    <h2>ค้นหาห้องว่าง</h2>
+                    <p>เลือกวันและเวลาที่ต้องการใช้งาน</p>
+                </div>
+            </div>
+
+
+            <div class="search-form">
+
+                <!-- Date -->
+                <div class="form-group">
+                    <label for="bookingDate"><i class="fa-solid fa-calendar"></i>วันที่จอง</label>
+
+                    <div class="input-box">
+                        <i class="fa-solid fa-calendar-days"></i>
+                        <input type="date" id="bookingDate" required>
+                    </div>
+                </div>
+
+
+                <!-- Start Time -->
+
+                <div class="form-group">
+                    <label for="startTime"><i class="fa-solid fa-clock"></i>เวลาเริ่ม</label>
+
+                    <div class="input-box">
+                        <i class="fa-regular fa-clock"></i>
+                        <input type="time" id="startTime" required>
+                    </div>
+                </div>
+
+
+                <!-- End Time -->
+                <div class="form-group">
+                    <label for="endTime"><i class="fa-solid fa-clock"></i>เวลาสิ้นสุด</label>
+
+                    <div class="input-box">
+                        <i class="fa-regular fa-clock"></i>
+                        <input type="time" id="endTime" required>
+                    </div>
+                </div>
+
+
+                <!-- People -->
+                <div class="form-group">
+                    <label for="people"><i class="fa-solid fa-users"></i>จำนวนผู้ใช้งาน</label>
+
+                    <div class="input-box">
+                        <i class="fa-solid fa-user-group"></i>
+                        <input type="number" id="people" min="1" placeholder="จำนวนคน" required>
+                    </div>
+                </div>
+
+
+                <!-- Room Type -->
+
+                <div class="form-group">
+                    <label for="roomType"><i class="fa-solid fa-door-open"></i>ประเภทห้อง</label>
+
+                    <div class="input-box">
+                        <i class="fa-solid fa-building"></i>
+                        <select id="roomType">
+                            <option value="all">ทุกประเภท</option>
+                            <option value="meeting">ห้องประชุม</option>
+                            <option value="computer">ห้องคอมพิวเตอร์</option>
+                            <option value="lecture">ห้องเรียน</option>
+                            <option value="laboratory">ห้องปฏิบัติการ</option>
+                        </select>
+                    </div>
+                </div>
+
+
+                <!-- Search Button -->
+
+                <button type="button" class="search-button" id="searchButton"><i class="fa-solid fa-magnifying-glass"></i><span>ค้นหาห้อง</span></button>
+            
+            </div>
+        </section>
+
+
+        <!-- ================= ROOM LIST ================= -->
+
+        <section class="room-section">
+            <div class="room-section-header">
+                <div>
+                    <h2><i class="fa-solid fa-door-open"></i>ห้องที่พร้อมใช้งาน</h2>
+                    <p>เลือกห้องที่ต้องการใช้งาน</p>
+                </div>
+
+                <div class="room-count"><span id="roomCount">4</span>ห้อง</div>
+            </div>
+
+
+            <div class="room-grid" id="roomGrid">
+
+            </div>
+
+        </section>
+    </main>
+
+
+    <!-- ================= FOOTER ================= -->
+
+    <footer class="dashboard-footer">
+
+        <div class="footer-logo">
+            <img src="../src/images/Logo RMUTL.png" alt="RMUTL">
+            <img src="../src/images/CPETC LOGO.png" alt="CPETC">
+        </div>
+
+        <p>© 2026 Project RMUTL Online Room Booking</p>
+
+        <span>ระบบจองห้องออนไลน์</span>
+    </footer>
+
+
+    
+<!-- BOOKING MODAL -->
+<div class="modal" id="confirmModal">
+    <div class="modal-overlay"></div>
+
+    <div class="modal-box">
+        <div class="modal-icon">
+            <i class="fa-solid fa-calendar-plus"></i>
+        </div>
+
+        <h2>กรอกข้อมูลการจอง</h2>
+        <p>กรุณาระบุวันและเวลาที่ต้องการใช้งาน</p>
+
+        <div class="modal-summary">
+            <div>
+                <span>ห้องที่เลือก</span>
+                <strong id="modalRoom">-</strong>
+            </div>
+        </div>
+
+        <div class="modal-booking-form">
+            <div class="form-group">
+                <label for="bookingDate">วันที่จอง</label>
+                <input type="date" id="bookingDate" required>
+            </div>
+
+            <div class="form-group">
+                <label for="startTime">เวลาเริ่มต้น</label>
+                <input type="time" id="startTime" required>
+            </div>
+
+            <div class="form-group">
+                <label for="endTime">เวลาสิ้นสุด</label>
+                <input type="time" id="endTime" required>
+            </div>
+
+            <div class="form-group">
+                <label for="people">จำนวนผู้ใช้งาน</label>
+                <input type="number" id="people"
+                       min="1" placeholder="จำนวนคน" required>
+            </div>
+        </div>
+
+        <div class="modal-actions">
+            <button type="button" class="modal-cancel"
+                    id="modalCancel">ยกเลิก</button>
+
+            <button type="button" class="modal-confirm"
+                    id="modalConfirm">
+                <i class="fa-solid fa-check"></i>
+                ยืนยันการจอง
+            </button>
+        </div>
+    </div>
+</div>
+
+    <script type="module" src="../JS/Booking.js"></script>
+    <script type="module" src="../src/user/navbar-user.js"></script>
+
+</body>
+</html>

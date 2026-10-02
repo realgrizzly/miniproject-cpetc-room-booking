@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>สมัครสมาชิก</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link rel="stylesheet" href="../CSS/Register.css">
+    <link rel="stylesheet" href="../Layout/Responsive.css">
+</head>
+
+<body>
+
+    <!-- =========================
+            Background
+    ========================== -->
+    <div class="background">
+        <div class="glow glow-1"></div>
+        <div class="glow glow-2"></div>
+        <div class="glow glow-3"></div>
+    </div>
+
+
+    <!-- =========================
+         Register Wrapper
+    ========================== -->
+    <main class="register-wrapper">
+
+
+        <!-- =========================
+            Logo Section
+     ========================== -->
+     <section class="logo-card">
+        <div class="logo-glow"></div>
+        <div class="logo-images">
+            <img src="../src/images/Logo RMUTL.png" alt="ตรามหาวิทยาลัย" class="university-logo">
+            <img src="../src/images/CPETC LOGO.png" alt="โลโก้แผนกวิศวกรรมคอมพิวเตอร์" class="second-logo">
+        </div>
+        
+        <h2>ระบบจองห้องแผนกวิศวกรรมคอมพิวเตอร์</h2>
+        <p>RMUTL COMPUTER ENGINEER Online Room Booking</p>
+        
+        <span class="system-line"></span>
+        
+        <div class="logo-description">
+            <i class="fa-solid fa-building"></i>
+            <span>มหาวิทยาลัยเทคโนโลยีราชมงคลล้านนา ตาก</span>
+        </div>
+    </section>
+
+
+        <!-- =========================
+             Register Section
+        ========================== -->
+
+        <section class="register-card">
+
+            <!-- Header -->
+            <div class="register-header">
+                <div class="register-icon">
+                    <i class="fa-solid fa-user-plus"></i>
+                </div>
+
+                <h1>สมัครสมาชิก</h1>
+                <p>สร้างบัญชีเพื่อใช้งานระบบ</p>
+            </div>
+
+
+            <!-- =========================
+                 Register Form
+            ========================== -->
+
+            <form id="registerForm" class="register-form" autocomplete="on">
+
+                <!-- Name -->
+                <div class="input-group">
+                    <label for="name">ชื่อ - นามสกุล</label>
+
+                    <div class="input-box">
+                        <i class="fa-solid fa-user"></i>
+                        <input type="text" id="name" name="name" placeholder="กรอกชื่อ - นามสกุล" autocomplete="name" required>
+                    </div>
+                </div>
+
+                <!-- Email -->
+                <div class="input-group">
+                    <label for="email">อีเมล</label>
+
+                    <div class="input-box">
+                        <i class="fa-solid fa-envelope"></i>
+                        <input type="email" id="email" name="email" placeholder="กรอกอีเมล" autocomplete="email" required>
+                    </div>
+                </div>
+
+
+                <!-- Password -->
+                <div class="input-group">
+                    <label for="password">รหัสผ่าน</label>
+
+                    <div class="input-box">
+                        <i class="fa-solid fa-lock"></i>
+                        <input type="password" id="password" name="password" placeholder="กรอกรหัสผ่านอย่างน้อย 8 ตัว" autocomplete="new-password" minlength="8" required>
+
+                        <button type="button" id="togglePassword" class="toggle-password" aria-label="แสดงรหัสผ่าน"><i class="fa-solid fa-eye"></i></button>
+                    </div>
+                </div>
+
+
+                <!-- Confirm Password -->
+                <div class="input-group">
+                    <label for="confirmPassword">ยืนยันรหัสผ่าน</label>
+
+                    <div class="input-box">
+                        <i class="fa-solid fa-lock"></i>
+                        <input type="password" id="confirmPassword" name="confirmPassword" placeholder="กรอกรหัสผ่านอีกครั้ง" autocomplete="new-password" minlength="8" required>
+
+                        <button type="button" id="toggleConfirmPassword" class="toggle-password" aria-label="แสดงรหัสผ่าน"><i class="fa-solid fa-eye"></i></button>
+                    </div>
+                </div>
+
+
+                <!-- =========================
+                     Terms
+                ========================== -->
+
+                <div class="register-options">
+                    <label class="terms-label"><input type="checkbox" id="terms"><span>ยอมรับเงื่อนไขการใช้งาน</span></label>
+                </div>
+
+
+                <!-- Register Button -->
+                <button type="submit" class="register-button"><span>สมัครสมาชิก</span><i class="fa-solid fa-arrow-right"></i></button>
+            </form>
+
+
+            <!-- Login Link -->
+            <div class="login-link">
+                <span>มีบัญชีอยู่แล้ว?</span>
+                <a href="Login.html">เข้าสู่ระบบ</a>
+            </div>
+
+
+            <!-- Footer -->
+            <div class="register-footer">
+                <span>© 2026 Online Room Booking System</span>
+            </div>
+
+        </section>
+    </main>
+
+
+
+    <!-- ==================================================
+         TERMS MODAL
+    =================================================== -->
+
+    <div class="terms-modal" id="termsModal">
+
+        <!-- Overlay -->
+        <div class="terms-overlay"></div>
+
+
+        <!-- Modal -->
+        <div class="terms-box">
+
+
+            <!-- Header -->
+            <div class="terms-header">
+                
+                <div class="terms-icon">
+                    <i class="fa-solid fa-file-contract"></i>
+                </div>
+
+
+                <div class="terms-title">
+                    <h2>เงื่อนไขการใช้งาน</h2>
+                    <p>ระบบจองห้องออนไลน์</p>
+                </div>
+
+
+                <button type="button" class="terms-close" id="closeTerms" aria-label="ปิด"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+
+
+            <!-- Content -->
+
+            <div class="terms-content">
+                <h3>เงื่อนไขการใช้งานระบบ</h3>
+                <p>กรุณาอ่านและทำความเข้าใจเงื่อนไขก่อนสมัครสมาชิกและใช้งานระบบ</p>
+
+
+                <!-- Item 1 -->
+                <div class="terms-item">
+                    <span>1</span>
+                    <div>
+                        <strong>ข้อมูลผู้ใช้งาน</strong>
+                        <p>ผู้ใช้งานต้องกรอกข้อมูลที่ถูกต้องและเป็นข้อมูลของตนเอง</p>
+                    </div>
+                </div>
+
+
+
+                <!-- Item 2 -->
+                <div class="terms-item">
+                    <span>2</span>
+                    <div>
+                        <strong>บัญชีผู้ใช้งาน</strong>
+                        <p>ผู้ใช้งานต้องเก็บรักษาชื่อผู้ใช้และรหัสผ่านของตนเองและไม่เปิดเผยให้ผู้อื่น</p>
+                    </div>
+                </div>
+
+
+
+                <!-- Item 3 -->
+                <div class="terms-item">
+                    <span>3</span>
+                    <div>
+                        <strong>การจองห้อง</strong>
+                        <p>ผู้ใช้งานต้องตรวจสอบห้องวันและเวลาที่ต้องการจองก่อนยืนยันการจองทุกครั้ง</p>
+                    </div>
+                </div>
+
+
+                <!-- Item 4 -->
+                <div class="terms-item">
+                    <span>4</span>
+                    <div>
+                        <strong>การใช้งานห้อง</strong>
+                        <p>ผู้ใช้งานต้องใช้ห้องและอุปกรณ์อย่างเหมาะสม และรักษาทรัพย์สินของมหาวิทยาลัย</p>
+                    </div>
+                </div>
+
+
+
+                <!-- Item 5 -->
+                <div class="terms-item">
+                    <span>5</span>
+                    <div>
+                        <strong>การยกเลิกการจอง</strong>
+                        <p>หากไม่สามารถใช้งานห้องตามเวลาที่จองไว้ควรยกเลิกการจองเพื่อให้ผู้อื่นสามารถใช้งานได้</p>
+                    </div>
+                </div>
+
+
+
+                <!-- Item 6 -->
+                <div class="terms-item">
+                    <span>6</span>
+                    <div>
+                        <strong>การใช้งานระบบ</strong>
+                        <p>ห้ามใช้ระบบในลักษณะที่ก่อให้เกิดความเสียหายหรือรบกวนการทำงานของระบบ</p>
+                    </div>
+                </div>
+
+            </div>
+
+
+
+            <!-- Footer -->
+            <div class="terms-footer">
+
+                <button type="button" class="terms-cancel" id="cancelTerms">ปิด</button>
+                <button type="button" class="terms-accept" id="acceptTerms"><i class="fa-solid fa-check"></i>ยอมรับเงื่อนไข</button>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="../JS/Register.js"></script>
+
+</body>
+</html>
