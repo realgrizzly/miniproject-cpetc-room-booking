@@ -115,7 +115,7 @@ loginForm.addEventListener(
             // Login สำเร็จ
             // ==========================================
 
-            alert("เข้าสู่ระบบสำเร็จ!");
+            alert("เข้าสู่ระบบสำเร็จ !");
 
             window.location.href =
                 "../Public/Dashboard.html";
@@ -162,7 +162,7 @@ loginForm.addEventListener(
             } else {
 
                 alert(
-                    "เข้าสู่ระบบไม่สำเร็จ กรุณาลองใหม่อีกครั้ง"
+                    "เข้าสู่ระบบไม่สำเร็จ ลองใหม่อีกครั้ง"
                 );
 
             }

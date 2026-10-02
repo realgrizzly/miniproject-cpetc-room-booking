@@ -23,11 +23,8 @@ import {
 // ==========================================
 
 document.addEventListener("DOMContentLoaded", function () {
-
     loadUserData();
-
     loadBookingStats();
-
     setupLogout();
 
 });
