@@ -41,9 +41,6 @@
 - PHP
 - Firebase Console
 
-```
----
-
 ## ⚙️ Requirements
 
 ก่อนใช้งานควรติดตั้ง:
