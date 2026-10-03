@@ -1,5 +1,6 @@
 # Dependencies
 node_modules/
+vendor/
 
 # Environment variables
 .env
@@ -23,3 +24,4 @@ Thumbs.db
 # Firebase private keys
 serviceAccountKey.json
 firebase-adminsdk-*.json
+/config/serviceAccountKey.json

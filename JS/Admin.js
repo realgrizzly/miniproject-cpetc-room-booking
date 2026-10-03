@@ -1,4 +1,3 @@
-
 import {
     onAuthStateChanged,
     signOut
@@ -10,53 +9,66 @@ import {
     doc,
     getDoc,
     updateDoc,
-    deleteDoc,
-    addDoc,
-    serverTimestamp
+    deleteDoc
 } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
 
-
 import { auth, db } from "../config/firebase-config.js";
+
 
 // =====================================
 // ตัวแปรระบบ
 // =====================================
 
 let allUsers = [];
+let allRooms = [];
 let editingRoomId = null;
+let allBookings = [];
+
 
 // =====================================
 // ตรวจสอบสิทธิ์ Admin
 // =====================================
 
 onAuthStateChanged(auth, async function (user) {
+
     if (!user) {
         window.location.href = "../public/Login.html";
         return;
     }
 
     try {
+
         const userRef = doc(db, "users", user.uid);
         const userDoc = await getDoc(userRef);
 
         if (!userDoc.exists()) {
+
             alert("ไม่พบข้อมูลผู้ใช้งาน");
+
             await signOut(auth);
+
             window.location.href = "../public/Login.html";
+
             return;
         }
 
         const userData = userDoc.data();
 
         if (userData.role !== "admin") {
+
             alert("คุณไม่มีสิทธิ์เข้าสู่หน้า Admin");
+
             window.location.href = "../public/Dashboard.html";
+
             return;
         }
 
-        const adminName = document.getElementById("adminName");
+        const adminName =
+            document.getElementById("adminName");
+
         if (adminName) {
-            adminName.textContent = userData.name || "Admin";
+            adminName.textContent =
+                userData.name || "Admin";
         }
 
         await Promise.all([
@@ -66,38 +78,55 @@ onAuthStateChanged(auth, async function (user) {
         ]);
 
     } catch (error) {
-        console.error("Admin Error:", error);
-        alert("เกิดข้อผิดพลาดในการโหลดข้อมูล");
+
+        console.error(
+            "Admin Error:",
+            error
+        );
+
+        alert(
+            "เกิดข้อผิดพลาดในการโหลดข้อมูล"
+        );
     }
 });
+
 
 // =====================================
 // จัดการผู้ใช้งาน
 // =====================================
 
-
-// ===============================
-// โหลดและจัดการ User ทั้งหมด
-// ===============================
-
-
 async function loadUsers() {
+
     try {
-        const usersSnapshot = await getDocs(
-            collection(db, "users")
-        );
+
+        const usersSnapshot =
+            await getDocs(
+                collection(db, "users")
+            );
 
         const adminTableBody =
-            document.getElementById("adminTableBody");
+            document.getElementById(
+                "adminTableBody"
+            );
+
         const userTableBody =
-            document.getElementById("userTableBody");
+            document.getElementById(
+                "userTableBody"
+            );
 
         const adminCount =
-            document.getElementById("adminCount");
-        const userCount =
-            document.getElementById("userCount");
+            document.getElementById(
+                "adminCount"
+            );
 
-        if (!adminTableBody || !userTableBody) return;
+        const userCount =
+            document.getElementById(
+                "userCount"
+            );
+
+        if (!adminTableBody || !userTableBody) {
+            return;
+        }
 
         adminTableBody.innerHTML = "";
         userTableBody.innerHTML = "";
@@ -106,8 +135,14 @@ async function loadUsers() {
         const users = [];
 
         usersSnapshot.forEach((userDoc) => {
-            const user = userDoc.data();
-            const item = { id: userDoc.id, ...user };
+
+            const user =
+                userDoc.data();
+
+            const item = {
+                id: userDoc.id,
+                ...user
+            };
 
             if (user.role === "admin") {
                 admins.push(item);
@@ -117,74 +152,150 @@ async function loadUsers() {
         });
 
         if (adminCount) {
-            adminCount.textContent = `${admins.length} คน`;
-        }
-        if (userCount) {
-            userCount.textContent = `${users.length} คน`;
+            adminCount.textContent =
+                `${admins.length} คน`;
         }
 
-        function renderRows(list, tbody, isAdmin) {
+        if (userCount) {
+            userCount.textContent =
+                `${users.length} คน`;
+        }
+
+
+        function renderRows(
+            list,
+            tbody,
+            isAdmin
+        ) {
+
             if (list.length === 0) {
+
                 tbody.innerHTML = `
                     <tr>
                         <td colspan="4">
-                            ${isAdmin
-                                ? "ยังไม่มีผู้ดูแลระบบ"
-                                : "ยังไม่มีผู้ใช้งานทั่วไป"}
+                            ${
+                                isAdmin
+                                    ? "ยังไม่มีผู้ดูแลระบบ"
+                                    : "ยังไม่มีผู้ใช้งานทั่วไป"
+                            }
                         </td>
                     </tr>
                 `;
+
                 return;
             }
 
+
             list.forEach((user) => {
+
                 const isSelf =
-                    auth.currentUser?.uid === user.id;
+                    auth.currentUser?.uid ===
+                    user.id;
 
-                const row = document.createElement("tr");
+                const row =
+                    document.createElement("tr");
 
-                const nameCell = document.createElement("td");
-                nameCell.textContent = user.name || "-";
 
-                const emailCell = document.createElement("td");
-                emailCell.textContent = user.email || "-";
+                const nameCell =
+                    document.createElement("td");
 
-                const roleCell = document.createElement("td");
-                roleCell.textContent = isAdmin ? "Admin" : "User";
+                nameCell.textContent =
+                    user.name || "-";
 
-                const actionCell = document.createElement("td");
-                actionCell.className = "user-actions";
 
-                const roleButton = document.createElement("button");
-                roleButton.type = "button";
+                const emailCell =
+                    document.createElement("td");
+
+                emailCell.textContent =
+                    user.email || "-";
+
+
+                const roleCell =
+                    document.createElement("td");
+
+                roleCell.textContent =
+                    isAdmin
+                        ? "Admin"
+                        : "User";
+
+
+                const actionCell =
+                    document.createElement("td");
+
+                actionCell.className =
+                    "user-actions";
+
+
+                const roleButton =
+                    document.createElement("button");
+
+                roleButton.type =
+                    "button";
+
                 roleButton.className =
                     "btn btn-secondary change-role-btn";
+
                 roleButton.textContent =
-                    isAdmin ? "เปลี่ยนเป็น User" : "เปลี่ยนเป็น Admin";
-                roleButton.dataset.uid = user.id;
+                    isAdmin
+                        ? "เปลี่ยนเป็น User"
+                        : "เปลี่ยนเป็น Admin";
+
+                roleButton.dataset.uid =
+                    user.id;
+
                 roleButton.dataset.role =
-                    isAdmin ? "user" : "admin";
-                roleButton.disabled = isSelf;
+                    isAdmin
+                        ? "user"
+                        : "admin";
 
-                const editButton = document.createElement("button");
-                editButton.type = "button";
-                editButton.className = "btn btn-edit edit-user-btn";
-                editButton.textContent = "แก้ไข";
-                editButton.dataset.uid = user.id;
-                editButton.dataset.name = user.name || "";
+                roleButton.disabled =
+                    isSelf;
 
-                const deleteButton = document.createElement("button");
-                deleteButton.type = "button";
-                deleteButton.className = "btn btn-delete delete-user-btn";
-                deleteButton.textContent = "ลบ";
-                deleteButton.dataset.uid = user.id;
-                deleteButton.disabled = isSelf;
+
+                const editButton =
+                    document.createElement("button");
+
+                editButton.type =
+                    "button";
+
+                editButton.className =
+                    "btn btn-edit edit-user-btn";
+
+                editButton.textContent =
+                    "แก้ไข";
+
+                editButton.dataset.uid =
+                    user.id;
+
+                editButton.dataset.name =
+                    user.name || "";
+
+
+                const deleteButton =
+                    document.createElement("button");
+
+                deleteButton.type =
+                    "button";
+
+                deleteButton.className =
+                    "btn btn-delete delete-user-btn";
+
+                deleteButton.textContent =
+                    "ลบ";
+
+                deleteButton.dataset.uid =
+                    user.id;
+
+                deleteButton.disabled =
+                    isSelf;
+
 
                 actionCell.append(
                     roleButton,
                     editButton,
                     deleteButton
                 );
+
 
                 row.append(
                     nameCell,
@@ -193,570 +304,1480 @@ async function loadUsers() {
                     actionCell
                 );
 
+
                 tbody.appendChild(row);
             });
         }
 
-        renderRows(admins, adminTableBody, true);
-        renderRows(users, userTableBody, false);
+
+        renderRows(
+            admins,
+            adminTableBody,
+            true
+        );
+
+        renderRows(
+            users,
+            userTableBody,
+            false
+        );
 
     } catch (error) {
-        console.error("โหลดข้อมูลผู้ใช้ไม่สำเร็จ:", error);
-        alert("ไม่สามารถโหลดข้อมูลผู้ใช้งานได้");
+
+        console.error(
+            "โหลดข้อมูลผู้ใช้ไม่สำเร็จ:",
+            error
+        );
+
+        alert(
+            "ไม่สามารถโหลดข้อมูลผู้ใช้งานได้"
+        );
     }
 }
 
 
-// ===============================
+// =====================================
 // ค้นหาผู้ใช้งานทั่วไป
-// ===============================
+// =====================================
 
 const userSearch =
-    document.getElementById("userSearch");
+    document.getElementById(
+        "userSearch"
+    );
 
 if (userSearch) {
-    userSearch.addEventListener("input", () => {
-        const keyword = userSearch.value
-            .trim()
-            .toLowerCase();
 
-        document.querySelectorAll(
-            "#userTableBody tr"
-        ).forEach((row) => {
-            const text = row.textContent.toLowerCase();
-            row.style.display = text.includes(keyword)
-                ? ""
-                : "none";
-        });
-    });
+    userSearch.addEventListener(
+        "input",
+        () => {
+
+            const keyword =
+                userSearch.value
+                    .trim()
+                    .toLowerCase();
+
+            document
+                .querySelectorAll(
+                    "#userTableBody tr"
+                )
+                .forEach((row) => {
+
+                    const text =
+                        row.textContent
+                            .toLowerCase();
+
+                    row.style.display =
+                        text.includes(keyword)
+                            ? ""
+                            : "none";
+                });
+        }
+    );
 }
 
 
-// ===============================
+// =====================================
 // ปุ่มจัดการผู้ใช้
-// ===============================
+// =====================================
 
-document.addEventListener("click", async (event) => {
-    const button = event.target.closest(
-        ".change-role-btn, .edit-user-btn, .delete-user-btn"
-    );
+document.addEventListener(
+    "click",
+    async (event) => {
 
-    if (!button) return;
+        const button =
+            event.target.closest(
+                ".change-role-btn, .edit-user-btn, .delete-user-btn"
+            );
 
-    const userId = button.dataset.uid;
-
-    if (auth.currentUser?.uid === userId) {
-        alert("ไม่สามารถจัดการบัญชีตัวเองได้");
-        return;
-    }
-
-    try {
-        button.disabled = true;
-
-        if (button.classList.contains("change-role-btn")) {
-            const newRole = button.dataset.role;
-            const roleName =
-                newRole === "admin" ? "Admin" : "User";
-
-            if (!confirm(`ต้องการเปลี่ยนเป็น ${roleName} หรือไม่?`)) {
-                button.disabled = false;
-                return;
-            }
-
-            await updateDoc(doc(db, "users", userId), {
-                role: newRole
-            });
-
-            alert("เปลี่ยนสิทธิ์สำเร็จ");
-        }
-
-        if (button.classList.contains("delete-user-btn")) {
-            if (!confirm(
-                "ยืนยันลบข้อมูลโปรไฟล์ผู้ใช้นี้หรือไม่?"
-            )) {
-                button.disabled = false;
-                return;
-            }
-
-            await deleteDoc(doc(db, "users", userId));
-            alert("ลบข้อมูลโปรไฟล์สำเร็จ");
-        }
-
-        await loadUsers();
-
-    } catch (error) {
-        console.error("จัดการผู้ใช้ไม่สำเร็จ:", error);
-        alert("ดำเนินการไม่สำเร็จ กรุณาตรวจสอบสิทธิ์ Firestore");
-        button.disabled = false;
-    }
-});
-
-
-// ===============================
-// จัดการปุ่มในตารางผู้ใช้
-// ===============================
-
-const userTableBody =
-    document.getElementById("userTableBody");
-
-if (userTableBody) {
-    userTableBody.addEventListener("click", async (event) => {
-        const button = event.target.closest("button");
-        if (!button) return;
-
-        const userId = button.dataset.uid;
-
-        // ห้ามจัดการบัญชีตัวเอง
-        if (
-            auth.currentUser &&
-            userId === auth.currentUser.uid
-        ) {
-            alert("ไม่สามารถจัดการบัญชีตัวเองได้");
+        if (!button) {
             return;
         }
 
-        // ===============================
-        // แก้ไขชื่อผู้ใช้
-        // ===============================
+        const userId =
+            button.dataset.uid;
 
-        if (button.classList.contains("edit-user-btn")) {
-            const oldName = button.dataset.name || "";
+        if (
+            auth.currentUser?.uid ===
+            userId
+        ) {
 
-            const newName = prompt(
-                "กรุณากรอกชื่อผู้ใช้ใหม่",
-                oldName
+            alert(
+                "ไม่สามารถจัดการบัญชีตัวเองได้"
             );
 
-            if (newName === null) return;
-
-            const name = newName.trim();
-
-            if (!name) {
-                alert("กรุณากรอกชื่อผู้ใช้");
-                return;
-            }
-
-            if (name.length > 100) {
-                alert("ชื่อผู้ใช้ต้องไม่เกิน 100 ตัวอักษร");
-                return;
-            }
-
-            if (name === oldName) return;
-
-            try {
-                button.disabled = true;
-
-                await updateDoc(
-                    doc(db, "users", userId),
-                    { name }
-                );
-
-                alert("แก้ไขชื่อผู้ใช้สำเร็จ");
-                await loadUsers();
-
-            } catch (error) {
-                console.error("แก้ไขชื่อไม่สำเร็จ:", error);
-                alert("ไม่สามารถแก้ไขชื่อได้");
-                button.disabled = false;
-            }
+            return;
         }
 
-        // ===============================
-        // เปลี่ยน Role
-        // ===============================
+        try {
 
-        if (button.classList.contains("change-role-btn")) {
-            const newRole = button.dataset.role;
+            button.disabled = true;
 
-            const roleName =
-                newRole === "admin" ? "Admin" : "User";
 
-            const confirmed = confirm(
-                `ต้องการเปลี่ยนบัญชีนี้เป็น ${roleName} หรือไม่?`
-            );
+            // =====================================
+            // เปลี่ยน Role
+            // =====================================
 
-            if (!confirmed) return;
+            if (
+                button.classList.contains(
+                    "change-role-btn"
+                )
+            ) {
 
-            try {
-                button.disabled = true;
+                const newRole =
+                    button.dataset.role;
+
+                const roleName =
+                    newRole === "admin"
+                        ? "Admin"
+                        : "User";
+
+
+                if (
+                    !confirm(
+                        `ต้องการเปลี่ยนเป็น ${roleName} หรือไม่?`
+                    )
+                ) {
+
+                    button.disabled =
+                        false;
+
+                    return;
+                }
+
 
                 await updateDoc(
-                    doc(db, "users", userId),
-                    { role: newRole }
+                    doc(
+                        db,
+                        "users",
+                        userId
+                    ),
+                    {
+                        role: newRole
+                    }
                 );
 
-                await loadUsers();
 
-            } catch (error) {
-                console.error("เปลี่ยน Role ไม่สำเร็จ:", error);
-                alert("ไม่สามารถเปลี่ยน Role ได้");
-                button.disabled = false;
+                alert(
+                    "เปลี่ยนสิทธิ์สำเร็จ"
+                );
             }
-        }
 
-        // ===============================
-        // ลบข้อมูลผู้ใช้จาก Firestore
-        // ===============================
 
-        if (button.classList.contains("delete-user-btn")) {
-            const confirmed = confirm(
-                "ต้องการลบข้อมูลโปรไฟล์ผู้ใช้นี้หรือไม่?\n\n" +
-                "การลบนี้ไม่สามารถย้อนกลับได้ และจะไม่ลบบัญชี Firebase Authentication"
-            );
+            // =====================================
+            // ลบ User
+            // =====================================
 
-            if (!confirmed) return;
+            if (
+                button.classList.contains(
+                    "delete-user-btn"
+                )
+            ) {
 
-            try {
-                button.disabled = true;
+                if (
+                    !confirm(
+                        "ยืนยันลบข้อมูลโปรไฟล์ผู้ใช้นี้หรือไม่?"
+                    )
+                ) {
+
+                    button.disabled =
+                        false;
+
+                    return;
+                }
+
 
                 await deleteDoc(
-                    doc(db, "users", userId)
+                    doc(
+                        db,
+                        "users",
+                        userId
+                    )
                 );
 
-                alert("ลบข้อมูลโปรไฟล์สำเร็จ");
-                await loadUsers();
 
-            } catch (error) {
-                console.error("ลบข้อมูลไม่สำเร็จ:", error);
-                alert("ไม่สามารถลบข้อมูลได้");
-                button.disabled = false;
+                alert(
+                    "ลบข้อมูลโปรไฟล์สำเร็จ"
+                );
+            }
+
+
+            await loadUsers();
+
+        } catch (error) {
+
+            console.error(
+                "จัดการผู้ใช้ไม่สำเร็จ:",
+                error
+            );
+
+            alert(
+                "ดำเนินการไม่สำเร็จ กรุณาตรวจสอบสิทธิ์ Firestore"
+            );
+
+            button.disabled =
+                false;
+        }
+    }
+);
+
+
+// =====================================
+// จัดการปุ่มในตารางผู้ใช้
+// =====================================
+
+const userTableBody =
+    document.getElementById(
+        "userTableBody"
+    );
+
+if (userTableBody) {
+
+    userTableBody.addEventListener(
+        "click",
+        async (event) => {
+
+            const button =
+                event.target.closest(
+                    "button"
+                );
+
+            if (!button) {
+                return;
+            }
+
+            const userId =
+                button.dataset.uid;
+
+
+            if (
+                auth.currentUser &&
+                userId ===
+                    auth.currentUser.uid
+            ) {
+
+                alert(
+                    "ไม่สามารถจัดการบัญชีตัวเองได้"
+                );
+
+                return;
+            }
+
+
+            // =====================================
+            // แก้ไขชื่อผู้ใช้
+            // =====================================
+
+            if (
+                button.classList.contains(
+                    "edit-user-btn"
+                )
+            ) {
+
+                const oldName =
+                    button.dataset.name || "";
+
+
+                const newName =
+                    prompt(
+                        "กรุณากรอกชื่อผู้ใช้ใหม่",
+                        oldName
+                    );
+
+
+                if (newName === null) {
+                    return;
+                }
+
+
+                const name =
+                    newName.trim();
+
+
+                if (!name) {
+
+                    alert(
+                        "กรุณากรอกชื่อผู้ใช้"
+                    );
+
+                    return;
+                }
+
+
+                if (name.length > 100) {
+
+                    alert(
+                        "ชื่อผู้ใช้ต้องไม่เกิน 100 ตัวอักษร"
+                    );
+
+                    return;
+                }
+
+
+                if (name === oldName) {
+                    return;
+                }
+
+
+                try {
+
+                    button.disabled =
+                        true;
+
+
+                    await updateDoc(
+                        doc(
+                            db,
+                            "users",
+                            userId
+                        ),
+                        {
+                            name: name
+                        }
+                    );
+
+
+                    alert(
+                        "แก้ไขชื่อผู้ใช้สำเร็จ"
+                    );
+
+
+                    await loadUsers();
+
+                } catch (error) {
+
+                    console.error(
+                        "แก้ไขชื่อไม่สำเร็จ:",
+                        error
+                    );
+
+                    alert(
+                        "ไม่สามารถแก้ไขชื่อได้"
+                    );
+
+                    button.disabled =
+                        false;
+                }
+            }
+
+
+            // =====================================
+            // เปลี่ยน Role
+            // =====================================
+
+            if (
+                button.classList.contains(
+                    "change-role-btn"
+                )
+            ) {
+
+                const newRole =
+                    button.dataset.role;
+
+                const roleName =
+                    newRole === "admin"
+                        ? "Admin"
+                        : "User";
+
+
+                const confirmed =
+                    confirm(
+                        `ต้องการเปลี่ยนบัญชีนี้เป็น ${roleName} หรือไม่?`
+                    );
+
+
+                if (!confirmed) {
+                    return;
+                }
+
+
+                try {
+
+                    button.disabled =
+                        true;
+
+
+                    await updateDoc(
+                        doc(
+                            db,
+                            "users",
+                            userId
+                        ),
+                        {
+                            role: newRole
+                        }
+                    );
+
+
+                    await loadUsers();
+
+                } catch (error) {
+
+                    console.error(
+                        "เปลี่ยน Role ไม่สำเร็จ:",
+                        error
+                    );
+
+                    alert(
+                        "ไม่สามารถเปลี่ยน Role ได้"
+                    );
+
+                    button.disabled =
+                        false;
+                }
+            }
+
+
+            // =====================================
+            // ลบข้อมูลผู้ใช้
+            // =====================================
+
+            if (
+                button.classList.contains(
+                    "delete-user-btn"
+                )
+            ) {
+
+                const confirmed =
+                    confirm(
+                        "ต้องการลบข้อมูลโปรไฟล์ผู้ใช้นี้หรือไม่?\n\n" +
+                        "การลบนี้ไม่สามารถย้อนกลับได้ และจะไม่ลบบัญชี Firebase Authentication"
+                    );
+
+
+                if (!confirmed) {
+                    return;
+                }
+
+
+                try {
+
+                    button.disabled =
+                        true;
+
+
+                    await deleteDoc(
+                        doc(
+                            db,
+                            "users",
+                            userId
+                        )
+                    );
+
+
+                    alert(
+                        "ลบข้อมูลโปรไฟล์สำเร็จ"
+                    );
+
+
+                    await loadUsers();
+
+                } catch (error) {
+
+                    console.error(
+                        "ลบข้อมูลไม่สำเร็จ:",
+                        error
+                    );
+
+                    alert(
+                        "ไม่สามารถลบข้อมูลได้"
+                    );
+
+                    button.disabled =
+                        false;
+                }
             }
         }
-    });
+    );
 }
+
 
 // =====================================
 // จัดการห้อง
 // =====================================
 
+
+// =====================================
 // โหลดรายการห้อง
+// =====================================
+
 async function loadRooms() {
-    const tbody = document.getElementById("roomTableBody");
 
     try {
-        const snapshot = await getDocs(collection(db, "rooms"));
 
-        const roomCount = document.getElementById("roomCount");
-        if (roomCount) {
-            roomCount.textContent = `${snapshot.size} ห้อง`;
-        }
+        const response =
+            await fetch(
+                "../api/rooms/list.php"
+            );
 
-        if (!tbody) return;
 
-        tbody.innerHTML = "";
+        const result =
+            await response.json();
 
-        if (snapshot.empty) {
-            tbody.innerHTML = `
-                <tr>
-                    <td colspan="6">
-                        <div class="empty-room">
-                            ยังไม่มีข้อมูลห้อง
-                        </div>
-                    </td>
-                </tr>
-            `;
+
+        if (!result.success) {
+
+            alert(
+                result.message
+            );
+
             return;
         }
 
-        snapshot.forEach(roomDoc => {
-            const room = roomDoc.data();
 
-            const row = document.createElement("tr");
+        console.log(
+            "Rooms:",
+            result.rooms
+        );
 
-            const nameCell = document.createElement("td");
-            nameCell.textContent = room.roomName || "-";
 
-            const typeCell = document.createElement("td");
-            typeCell.textContent = room.roomType || "-";
+        allRooms =
+            result.rooms || [];
 
-            const capacityCell = document.createElement("td");
+
+        renderRooms(
+            allRooms
+        );
+
+    } catch (error) {
+
+        console.error(
+            "Load rooms error:",
+            error
+        );
+
+        alert(
+            "ไม่สามารถโหลดข้อมูลห้องได้"
+        );
+    }
+}
+
+
+// =====================================
+// เพิ่ม / แก้ไขห้อง
+// =====================================
+
+async function addRoom() {
+
+    try {
+
+        const roomName =
+            document.getElementById(
+                "roomName"
+            ).value.trim();
+
+
+        const roomType =
+            document.getElementById(
+                "roomType"
+            ).value.trim();
+
+
+        const capacity =
+            Number(
+                document.getElementById(
+                    "capacity"
+                ).value
+            );
+
+
+        const building =
+            document.getElementById(
+                "building"
+            ).value.trim();
+
+
+        const equipment =
+            document.getElementById(
+                "equipment"
+            ).value.trim();
+
+
+        const statusElement =
+            document.getElementById(
+                "status"
+            );
+
+
+        let status =
+            statusElement
+                ? statusElement.value
+                : "available";
+
+
+        // แปลงภาษาไทยเป็นค่าที่เก็บใน Firestore
+        if (
+            status ===
+            "พร้อมใช้งาน"
+        ) {
+
+            status =
+                "available";
+        }
+
+
+        if (
+            status ===
+            "ไม่พร้อมใช้งาน"
+        ) {
+
+            status =
+                "unavailable";
+        }
+
+
+        // =====================================
+        // ตรวจสอบข้อมูล
+        // =====================================
+
+        if (
+            !roomName ||
+            !roomType ||
+            !capacity
+        ) {
+
+            alert(
+                "กรุณากรอกข้อมูลห้องให้ครบ"
+            );
+
+            return;
+        }
+
+
+        const roomData = {
+
+            roomName:
+                roomName,
+
+            roomType:
+                roomType,
+
+            capacity:
+                capacity,
+
+            building:
+                building,
+
+            equipment:
+                equipment,
+
+            status:
+                status
+        };
+
+
+        // =====================================
+        // แก้ไขห้อง
+        // =====================================
+
+        if (editingRoomId) {
+
+            roomData.roomId =
+                editingRoomId;
+
+
+            const response =
+                await fetch(
+                    "../api/rooms/update.php",
+                    {
+                        method: "POST",
+
+                        headers: {
+                            "Content-Type":
+                                "application/json"
+                        },
+
+                        body:
+                            JSON.stringify(
+                                roomData
+                            )
+                    }
+                );
+
+
+            const result =
+                await response.json();
+
+
+            if (
+                !response.ok ||
+                !result.success
+            ) {
+
+                throw new Error(
+                    result.message ||
+                    "ไม่สามารถแก้ไขห้องได้"
+                );
+            }
+
+
+            alert(
+                "แก้ไขห้องสำเร็จ"
+            );
+
+        }
+
+
+        // =====================================
+        // เพิ่มห้อง
+        // =====================================
+
+        else {
+
+            const response =
+                await fetch(
+                    "../api/rooms/create.php",
+                    {
+                        method: "POST",
+
+                        headers: {
+                            "Content-Type":
+                                "application/json"
+                        },
+
+                        body:
+                            JSON.stringify(
+                                roomData
+                            )
+                    }
+                );
+
+
+            const result =
+                await response.json();
+
+
+            if (
+                !response.ok ||
+                !result.success
+            ) {
+
+                throw new Error(
+                    result.message ||
+                    "ไม่สามารถเพิ่มห้องได้"
+                );
+            }
+
+
+            alert(
+                "เพิ่มห้องสำเร็จ"
+            );
+        }
+
+
+        // ล้างฟอร์ม
+        clearRoomForm();
+
+
+        // โหลดรายการห้องใหม่
+        await loadRooms();
+
+
+    } catch (error) {
+
+        console.error(
+            "Add/Edit room error:",
+            error
+        );
+
+
+        alert(
+            "เกิดข้อผิดพลาด: " +
+            error.message
+        );
+    }
+}
+
+
+// =====================================
+// แสดงรายการห้อง
+// =====================================
+
+function renderRooms(rooms) {
+
+    const roomTableBody =
+        document.getElementById(
+            "roomTableBody"
+        );
+
+
+    if (!roomTableBody) {
+
+        console.error(
+            "ไม่พบ roomTableBody"
+        );
+
+        return;
+    }
+
+
+    roomTableBody.innerHTML =
+        "";
+
+
+    if (
+        !rooms ||
+        rooms.length === 0
+    ) {
+
+        roomTableBody.innerHTML = `
+            <tr>
+                <td colspan="6">
+                    ไม่พบข้อมูลห้อง
+                </td>
+            </tr>
+        `;
+
+        return;
+    }
+
+
+    // =====================================
+    // เรียงเลขห้องน้อย → มาก
+    // =====================================
+
+    rooms.sort(
+        (a, b) => {
+
+            const numberA =
+                parseInt(
+                    String(
+                        a.roomName || ""
+                    )
+                    .match(
+                        /\d+/
+                    )?.[0] || 0
+                );
+
+
+            const numberB =
+                parseInt(
+                    String(
+                        b.roomName || ""
+                    )
+                    .match(
+                        /\d+/
+                    )?.[0] || 0
+                );
+
+
+            if (
+                numberA !==
+                numberB
+            ) {
+
+                return (
+                    numberA -
+                    numberB
+                );
+            }
+
+
+            return String(
+                a.roomName || ""
+            ).localeCompare(
+                String(
+                    b.roomName || ""
+                ),
+                undefined,
+                {
+                    numeric: true
+                }
+            );
+        }
+    );
+
+
+    // =====================================
+    // แสดงแต่ละห้อง
+    // =====================================
+
+    rooms.forEach(
+        room => {
+
+            const row =
+                document.createElement(
+                    "tr"
+                );
+
+
+            // ชื่อห้อง
+            const roomNameCell =
+                document.createElement(
+                    "td"
+                );
+
+            roomNameCell.textContent =
+                room.roomName ||
+                "-";
+
+
+            // ประเภท
+            const roomTypeCell =
+                document.createElement(
+                    "td"
+                );
+
+            roomTypeCell.textContent =
+                room.roomType ||
+                "-";
+
+
+            // ความจุ
+            const capacityCell =
+                document.createElement(
+                    "td"
+                );
+
             capacityCell.textContent =
-                `${room.capacity ?? 0} คน`;
+                room.capacity
+                    ? `${room.capacity} คน`
+                    : "-";
 
-            const buildingCell = document.createElement("td");
-            buildingCell.textContent = room.building || "-";
 
-            const statusCell = document.createElement("td");
-            const statusSpan = document.createElement("span");
+            // อาคาร
+            const buildingCell =
+                document.createElement(
+                    "td"
+                );
 
-            const isAvailable = room.status === "available";
+            buildingCell.textContent =
+                room.building ||
+                "-";
 
-            statusSpan.className = isAvailable
-                ? "status status-available"
-                : "status status-unavailable";
 
-            statusSpan.textContent = isAvailable
-                ? "พร้อมใช้งาน"
-                : "ไม่พร้อมใช้งาน";
+            // =====================================
+            // สถานะ
+            // =====================================
 
-            statusCell.appendChild(statusSpan);
+            const statusCell =
+                document.createElement(
+                    "td"
+                );
 
-            const actionCell = document.createElement("td");
-            const actionButtons = document.createElement("div");
-            actionButtons.className = "action-buttons";
 
-            const editButton = document.createElement("button");
-            editButton.type = "button";
-            editButton.className = "action-btn edit-btn";
-            editButton.dataset.id = roomDoc.id;
-            editButton.textContent = "แก้ไข";
+            const status =
+                document.createElement(
+                    "span"
+                );
 
-            const deleteButton = document.createElement("button");
-            deleteButton.type = "button";
-            deleteButton.className = "action-btn delete-btn";
-            deleteButton.dataset.id = roomDoc.id;
-            deleteButton.textContent = "ลบ";
 
-            actionButtons.append(editButton, deleteButton);
-            actionCell.appendChild(actionButtons);
+            status.className =
+                "room-status";
+
+
+            if (
+                room.status ===
+                    "available" ||
+                room.status ===
+                    "พร้อมใช้งาน"
+            ) {
+
+                status.textContent =
+                    "พร้อมใช้งาน";
+
+            }
+
+            else if (
+                room.status ===
+                    "unavailable" ||
+                room.status ===
+                    "ไม่พร้อมใช้งาน"
+            ) {
+
+                status.textContent =
+                    "ไม่พร้อมใช้งาน";
+
+            }
+
+            else {
+
+                status.textContent =
+                    room.status ||
+                    "-";
+            }
+
+
+            statusCell.appendChild(
+                status
+            );
+
+
+            // =====================================
+            // ปุ่มจัดการ
+            // =====================================
+
+            const actionCell =
+                document.createElement(
+                    "td"
+                );
+
+
+            const editButton =
+                document.createElement(
+                    "button"
+                );
+
+            editButton.type =
+                "button";
+
+            editButton.className =
+                "btn btn-edit edit-btn";
+
+            editButton.textContent =
+                "แก้ไข";
+
+            editButton.dataset.id =
+                room.id;
+
+
+            const deleteButton =
+                document.createElement(
+                    "button"
+                );
+
+            deleteButton.type =
+                "button";
+
+            deleteButton.className =
+                "btn btn-delete delete-btn";
+
+            deleteButton.textContent =
+                "ลบ";
+
+            deleteButton.dataset.id =
+                room.id;
+
+
+            actionCell.append(
+                editButton,
+                deleteButton
+            );
+
 
             row.append(
-                nameCell,
-                typeCell,
+                roomNameCell,
+                roomTypeCell,
                 capacityCell,
                 buildingCell,
                 statusCell,
                 actionCell
             );
 
-            tbody.appendChild(row);
-        });
 
-    } catch (error) {
-        console.error("โหลดข้อมูลห้องไม่สำเร็จ:", error);
-
-        if (tbody) {
-            tbody.innerHTML = `
-                <tr>
-                    <td colspan="6">
-                        <div class="empty-room">
-                            ไม่สามารถโหลดข้อมูลห้องได้
-                        </div>
-                    </td>
-                </tr>
-            `;
-        }
-    }
-}
-
-// =====================================
-// เพิ่มและแก้ไขห้อง
-// =====================================
-
-async function addRoom() {
-    const roomName = document.getElementById("roomName").value.trim();
-    const roomType = document.getElementById("roomType").value;
-    const capacityInput = document.getElementById("capacity").value;
-    const capacity = Number(capacityInput);
-    const building = document.getElementById("building").value.trim();
-    const equipment = document.getElementById("equipment").value.trim();
-    const status = document.getElementById("status").value;
-
-    if (!roomName || !roomType || !capacityInput || !building) {
-        alert("กรุณากรอกข้อมูลห้องให้ครบ");
-        return;
-    }
-
-    if (!Number.isInteger(capacity) || capacity < 1) {
-        alert("กรุณากรอกความจุตั้งแต่ 1 คนขึ้นไป");
-        return;
-    }
-
-    const saveButton = document.getElementById("saveRoomButton");
-
-    try {
-        if (saveButton) saveButton.disabled = true;
-
-        const roomData = {
-            roomName,
-            roomType,
-            capacity,
-            building,
-            equipment,
-            status
-        };
-
-        if (editingRoomId) {
-            // แก้ไขห้องเดิม
-            await updateDoc(
-                doc(db, "rooms", editingRoomId),
-                roomData
+            roomTableBody.appendChild(
+                row
             );
-
-            alert("แก้ไขข้อมูลห้องสำเร็จ");
-
-        } else {
-            // เพิ่มห้องใหม่
-            await addDoc(collection(db, "rooms"), {
-                ...roomData,
-                createdAt: serverTimestamp()
-            });
-
-            alert("เพิ่มห้องสำเร็จ");
         }
-
-        clearRoomForm();
-        await loadRooms();
-
-    } catch (error) {
-        console.error("บันทึกห้องไม่สำเร็จ:", error);
-        alert("ไม่สามารถบันทึกข้อมูลห้องได้");
-    } finally {
-        if (saveButton) saveButton.disabled = false;
-    }
+    );
 }
+
 
 // =====================================
 // แก้ไขห้อง
 // =====================================
 
-async function editRoom(roomId) {
-    try {
-        const roomRef = doc(db, "rooms", roomId);
-        const roomDoc = await getDoc(roomRef);
+function editRoom(roomId) {
 
-        if (!roomDoc.exists()) {
-            alert("ไม่พบข้อมูลห้องนี้");
-            await loadRooms();
-            return;
-        }
+    const room =
+        allRooms.find(
+            room =>
+                room.id ===
+                roomId
+        );
 
-        const room = roomDoc.data();
 
-        document.getElementById("roomName").value =
-            room.roomName || "";
+    if (!room) {
 
-        document.getElementById("roomType").value =
-            room.roomType || "";
+        alert(
+            "ไม่พบข้อมูลห้อง"
+        );
 
-        document.getElementById("capacity").value =
-            room.capacity ?? "";
-
-        document.getElementById("building").value =
-            room.building || "";
-
-        document.getElementById("equipment").value =
-            room.equipment || "";
-
-        document.getElementById("status").value =
-            room.status || "available";
-
-        editingRoomId = roomId;
-
-        const saveButton = document.getElementById("saveRoomButton");
-        if (saveButton) {
-            saveButton.textContent = "บันทึกการแก้ไข";
-        }
-
-        document.querySelector(".room-form-card")
-            ?.scrollIntoView({
-                behavior: "smooth",
-                block: "start"
-            });
-
-    } catch (error) {
-        console.error("โหลดห้องเพื่อแก้ไขไม่สำเร็จ:", error);
-        alert("ไม่สามารถโหลดข้อมูลห้องได้");
+        return;
     }
+
+
+    // ใส่ข้อมูลเดิมลงฟอร์ม
+    document.getElementById(
+        "roomName"
+    ).value =
+        room.roomName ||
+        "";
+
+
+    document.getElementById(
+        "roomType"
+    ).value =
+        room.roomType ||
+        "";
+
+
+    document.getElementById(
+        "capacity"
+    ).value =
+        room.capacity ||
+        "";
+
+
+    document.getElementById(
+        "building"
+    ).value =
+        room.building ||
+        "";
+
+
+    document.getElementById(
+        "equipment"
+    ).value =
+        room.equipment ||
+        "";
+
+
+    const statusElement =
+        document.getElementById(
+            "status"
+        );
+
+
+    if (statusElement) {
+
+        if (
+            room.status ===
+            "พร้อมใช้งาน"
+        ) {
+
+            statusElement.value =
+                "available";
+
+        }
+
+        else if (
+            room.status ===
+            "ไม่พร้อมใช้งาน"
+        ) {
+
+            statusElement.value =
+                "unavailable";
+
+        }
+
+        else {
+
+            statusElement.value =
+                room.status ||
+                "available";
+        }
+    }
+
+
+    // จำ ID ห้อง
+    editingRoomId =
+        roomId;
+
+
+    // เปลี่ยนข้อความปุ่ม
+    const saveButton =
+        document.getElementById(
+            "saveRoomButton"
+        );
+
+
+    if (saveButton) {
+
+        saveButton.textContent =
+            "บันทึกการแก้ไข";
+    }
+
+
+    // เลื่อนไปยังฟอร์ม
+    document.getElementById(
+        "roomName"
+    )?.scrollIntoView({
+        behavior:
+            "smooth",
+
+        block:
+            "center"
+    });
 }
+
 
 // =====================================
 // ลบห้อง
 // =====================================
 
 async function deleteRoom(roomId) {
-    if (!confirm("ต้องการลบห้องนี้ใช่หรือไม่?\nการลบไม่สามารถย้อนกลับได้")) {
+
+    if (
+        !confirm(
+            "ต้องการลบห้องนี้ใช่หรือไม่?"
+        )
+    ) {
+
         return;
     }
 
-    try {
-        await deleteDoc(doc(db, "rooms", roomId));
 
-        if (editingRoomId === roomId) {
-            clearRoomForm();
+    try {
+
+        const response =
+            await fetch(
+                "../api/rooms/delete.php",
+                {
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
+
+                    body:
+                        JSON.stringify({
+                            roomId:
+                                roomId
+                        })
+                }
+            );
+
+
+        const result =
+            await response.json();
+
+
+        if (
+            result.success
+        ) {
+
+            alert(
+                "ลบห้องสำเร็จ"
+            );
+
+
+            await loadRooms();
+
         }
 
-        alert("ลบห้องสำเร็จ");
-        await loadRooms();
+        else {
+
+            alert(
+                result.message
+            );
+        }
+
 
     } catch (error) {
-        console.error("ลบห้องไม่สำเร็จ:", error);
-        alert("ไม่สามารถลบห้องได้");
+
+        console.error(
+            "Delete room error:",
+            error
+        );
+
+
+        alert(
+            "ไม่สามารถลบห้องได้"
+        );
     }
 }
 
-// จัดการปุ่มแก้ไขและลบห้อง
-const roomTableBody = document.getElementById("roomTableBody");
+
+// =====================================
+// ปุ่มแก้ไข / ลบห้อง
+// =====================================
+
+const roomTableBody =
+    document.getElementById(
+        "roomTableBody"
+    );
+
 
 if (roomTableBody) {
-    roomTableBody.addEventListener("click", function (event) {
-        const editButton = event.target.closest(".edit-btn");
-        const deleteButton = event.target.closest(".delete-btn");
 
-        if (editButton) {
-            editRoom(editButton.dataset.id);
-        }
+    roomTableBody.addEventListener(
+        "click",
+        function (event) {
 
-        if (deleteButton) {
-            deleteRoom(deleteButton.dataset.id);
+            const editButton =
+                event.target.closest(
+                    ".edit-btn"
+                );
+
+
+            const deleteButton =
+                event.target.closest(
+                    ".delete-btn"
+                );
+
+
+            if (editButton) {
+
+                editRoom(
+                    editButton.dataset.id
+                );
+
+                return;
+            }
+
+
+            if (deleteButton) {
+
+                deleteRoom(
+                    deleteButton.dataset.id
+                );
+            }
         }
-    });
+    );
 }
+
 
 // =====================================
 // ล้างฟอร์ม
 // =====================================
 
 function clearRoomForm() {
-    document.getElementById("roomName").value = "";
-    document.getElementById("roomType").value = "";
-    document.getElementById("capacity").value = "";
-    document.getElementById("building").value = "";
-    document.getElementById("equipment").value = "";
-    document.getElementById("status").value = "available";
 
-    editingRoomId = null;
+    document.getElementById(
+        "roomName"
+    ).value = "";
 
-    const saveButton = document.getElementById("saveRoomButton");
+
+    document.getElementById(
+        "roomType"
+    ).value = "";
+
+
+    document.getElementById(
+        "capacity"
+    ).value = "";
+
+
+    document.getElementById(
+        "building"
+    ).value = "";
+
+
+    document.getElementById(
+        "equipment"
+    ).value = "";
+
+
+    const statusElement =
+        document.getElementById(
+            "status"
+        );
+
+
+    if (statusElement) {
+
+        statusElement.value =
+            "available";
+    }
+
+
+    editingRoomId =
+        null;
+
+
+    const saveButton =
+        document.getElementById(
+            "saveRoomButton"
+        );
+
+
     if (saveButton) {
-        saveButton.textContent = "+ เพิ่มห้อง";
+
+        saveButton.textContent =
+            "+ เพิ่มห้อง";
     }
 }
 
-// ปุ่มเพิ่มหรือบันทึกการแก้ไข
-const saveRoomButton = document.getElementById("saveRoomButton");
+
+// =====================================
+// ปุ่มเพิ่ม / บันทึก
+// =====================================
+
+const saveRoomButton =
+    document.getElementById(
+        "saveRoomButton"
+    );
+
 
 if (saveRoomButton) {
-    saveRoomButton.addEventListener("click", addRoom);
+
+    saveRoomButton.addEventListener(
+        "click",
+        addRoom
+    );
 }
 
+
+// =====================================
 // ปุ่มล้างข้อมูล
-const clearRoomButton = document.getElementById("clearRoomButton");
+// =====================================
+
+const clearRoomButton =
+    document.getElementById(
+        "clearRoomButton"
+    );
+
 
 if (clearRoomButton) {
-    clearRoomButton.addEventListener("click", clearRoomForm);
+
+    clearRoomButton.addEventListener(
+        "click",
+        clearRoomForm
+    );
 }
+
 
 // =====================================
 // ออกจากระบบ
 // =====================================
 
-const logoutButton = document.getElementById("logoutButton");
+const logoutButton =
+    document.getElementById(
+        "logoutButton"
+    );
+
 
 if (logoutButton) {
-    logoutButton.addEventListener("click", async function () {
-        if (!confirm("คุณต้องการออกจากระบบหรือไม่?")) {
-            return;
-        }
 
-        try {
-            await signOut(auth);
-            window.location.href = "../public/Login.html";
-        } catch (error) {
-            console.error("Logout Error:", error);
-            alert("ไม่สามารถออกจากระบบได้");
+    logoutButton.addEventListener(
+        "click",
+        async function () {
+
+            if (
+                !confirm(
+                    "คุณต้องการออกจากระบบหรือไม่?"
+                )
+            ) {
+
+                return;
+            }
+
+
+            try {
+
+                await signOut(
+                    auth
+                );
+
+
+                window.location.href =
+                    "../public/Login.html";
+
+            } catch (error) {
+
+                console.error(
+                    "Logout Error:",
+                    error
+                );
+
+
+                alert(
+                    "ไม่สามารถออกจากระบบได้"
+                );
+            }
         }
-    });
+    );
 }
 
 
@@ -764,185 +1785,534 @@ if (logoutButton) {
 // จัดการคำขอจองห้อง
 // =====================================
 
-let allBookings = [];
-
 async function loadBookings() {
-    const tbody = document.getElementById("bookingRequestsBody");
-    if (!tbody) return;
 
-    tbody.innerHTML = `
-        <tr><td colspan="7">กำลังโหลดคำขอจอง...</td></tr>
-    `;
-
-    try {
-        const [bookingSnapshot, userSnapshot] = await Promise.all([
-            getDocs(collection(db, "bookings")),
-            getDocs(collection(db, "users"))
-        ]);
-
-        // สร้างแผนที่ UID -> ชื่อผู้ใช้
-        const userNames = new Map();
-        userSnapshot.forEach(userDoc => {
-            const user = userDoc.data();
-            userNames.set(userDoc.id, user.name || user.email || "-");
-        });
-
-        allBookings = bookingSnapshot.docs.map(item => {
-            const data = item.data();
-            return {
-                id: item.id,
-                ...data,
-                userName: userNames.get(data.userId) || "ไม่พบผู้ใช้"
-            };
-        });
-
-        // เรียงตามวันที่จองและเวลา
-        allBookings.sort((a, b) =>
-            `${b.bookingDate || ""} ${b.startTime || ""}`
-                .localeCompare(`${a.bookingDate || ""} ${a.startTime || ""}`)
+    const tbody =
+        document.getElementById(
+            "bookingRequestsBody"
         );
 
-        renderBookingRequests();
 
-    } catch (error) {
-        console.error("โหลดคำขอจองไม่สำเร็จ:", error);
-        tbody.innerHTML = `
-            <tr>
-                <td colspan="7">ไม่สามารถโหลดคำขอจองได้</td>
-            </tr>
-        `;
-    }
-}
-
-function renderBookingRequests() {
-    const tbody = document.getElementById("bookingRequestsBody");
-    const filter = document.getElementById("bookingStatusFilter");
-
-    if (!tbody) return;
-
-    const statusFilter = filter?.value || "all";
-
-    const bookings = allBookings.filter(booking =>
-        statusFilter === "all" || booking.status === statusFilter
-    );
-
-    tbody.innerHTML = "";
-
-    if (bookings.length === 0) {
-        tbody.innerHTML = `
-            <tr>
-                <td colspan="7">ไม่พบคำขอจองในสถานะนี้</td>
-            </tr>
-        `;
+    if (!tbody) {
         return;
     }
 
-    const statusLabels = {
-        pending: "รออนุมัติ",
-        approved: "อนุมัติแล้ว",
-        rejected: "ปฏิเสธแล้ว"
-    };
 
-    bookings.forEach(booking => {
-        const row = document.createElement("tr");
+    tbody.innerHTML = `
+        <tr>
+            <td colspan="7">
+                กำลังโหลดคำขอจอง...
+            </td>
+        </tr>
+    `;
 
-        const values = [
-            booking.roomName || "-",
-            booking.userName,
-            booking.bookingDate || "-",
-            `${booking.startTime || "-"} - ${booking.endTime || "-"}`,
-            `${booking.people ?? "-"} คน`
-        ];
 
-        values.forEach(value => {
-            const cell = document.createElement("td");
-            cell.textContent = value;
-            row.appendChild(cell);
-        });
+    try {
 
-        const statusCell = document.createElement("td");
-        const status = document.createElement("span");
-        const currentStatus = statusLabels[booking.status]
-            ? booking.status
-            : "pending";
+        const [
+            bookingSnapshot,
+            userSnapshot
+        ] =
+            await Promise.all([
+                getDocs(
+                    collection(
+                        db,
+                        "bookings"
+                    )
+                ),
 
-        status.className = `booking-status ${currentStatus}`;
-        status.textContent =
-            statusLabels[booking.status] || booking.status || "ไม่ระบุ";
-        statusCell.appendChild(status);
-        row.appendChild(statusCell);
+                getDocs(
+                    collection(
+                        db,
+                        "users"
+                    )
+                )
+            ]);
 
-        const actionCell = document.createElement("td");
-        const actions = document.createElement("div");
-        actions.className = "booking-action";
 
-        if (booking.status === "pending") {
-            const approve = document.createElement("button");
-            approve.type = "button";
-            approve.className = "booking-approve";
-            approve.textContent = "อนุมัติ";
-            approve.dataset.id = booking.id;
-            approve.dataset.status = "approved";
+        // =====================================
+        // UID -> ชื่อผู้ใช้
+        // =====================================
 
-            const reject = document.createElement("button");
-            reject.type = "button";
-            reject.className = "booking-reject";
-            reject.textContent = "ปฏิเสธ";
-            reject.dataset.id = booking.id;
-            reject.dataset.status = "rejected";
+        const userNames =
+            new Map();
 
-            actions.append(approve, reject);
-        } else {
-            actions.textContent = "ดำเนินการแล้ว";
-        }
 
-        actionCell.appendChild(actions);
-        row.appendChild(actionCell);
-        tbody.appendChild(row);
-    });
-}
+        userSnapshot.forEach(
+            userDoc => {
 
-// อนุมัติหรือปฏิเสธคำขอ
-document.getElementById("bookingRequestsBody")
-    ?.addEventListener("click", async event => {
-        const button = event.target.closest(
-            ".booking-approve, .booking-reject"
+                const user =
+                    userDoc.data();
+
+
+                userNames.set(
+                    userDoc.id,
+                    user.name ||
+                    user.email ||
+                    "-"
+                );
+            }
         );
 
-        if (!button || button.disabled) return;
 
-        const bookingId = button.dataset.id;
-        const newStatus = button.dataset.status;
+        // =====================================
+        // โหลด Booking
+        // =====================================
 
-        const actionName = newStatus === "approved"
-            ? "อนุมัติ"
-            : "ปฏิเสธ";
+        allBookings =
+            bookingSnapshot.docs.map(
+                item => {
 
-        if (!confirm(`ยืนยันการ${actionName}คำขอจองนี้หรือไม่?`)) {
-            return;
+                    const data =
+                        item.data();
+
+
+                    return {
+
+                        id:
+                            item.id,
+
+                        ...data,
+
+                        userName:
+                            userNames.get(
+                                data.userId
+                            ) ||
+                            "ไม่พบผู้ใช้"
+                    };
+                }
+            );
+
+
+        // =====================================
+        // เรียงวันที่ / เวลา
+        // =====================================
+
+        allBookings.sort(
+            (a, b) =>
+
+                `${b.bookingDate || ""} ${b.startTime || ""}`
+                    .localeCompare(
+                        `${a.bookingDate || ""} ${a.startTime || ""}`
+                    )
+        );
+
+
+        renderBookingRequests();
+
+
+    } catch (error) {
+
+        console.error(
+            "โหลดคำขอจองไม่สำเร็จ:",
+            error
+        );
+
+
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="7">
+                    ไม่สามารถโหลดคำขอจองได้
+                </td>
+            </tr>
+        `;
+    }
+}
+
+
+// =====================================
+// แสดงคำขอจอง
+// =====================================
+
+function renderBookingRequests() {
+
+    const tbody =
+        document.getElementById(
+            "bookingRequestsBody"
+        );
+
+
+    const filter =
+        document.getElementById(
+            "bookingStatusFilter"
+        );
+
+
+    if (!tbody) {
+        return;
+    }
+
+
+    const statusFilter =
+        filter?.value ||
+        "all";
+
+
+    const bookings =
+        allBookings.filter(
+            booking =>
+
+                statusFilter ===
+                    "all" ||
+
+                booking.status ===
+                    statusFilter
+        );
+
+
+    tbody.innerHTML =
+        "";
+
+
+    if (
+        bookings.length === 0
+    ) {
+
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="7">
+                    ไม่พบคำขอจองในสถานะนี้
+                </td>
+            </tr>
+        `;
+
+        return;
+    }
+
+
+    const statusLabels = {
+
+        pending:
+            "รออนุมัติ",
+
+        approved:
+            "อนุมัติแล้ว",
+
+        rejected:
+            "ปฏิเสธแล้ว"
+    };
+
+
+    bookings.forEach(
+        booking => {
+
+            const row =
+                document.createElement(
+                    "tr"
+                );
+
+
+            const values = [
+
+                booking.roomName ||
+                    "-",
+
+                booking.userName,
+
+                booking.bookingDate ||
+                    "-",
+
+                `${booking.startTime || "-"} - ${booking.endTime || "-"}`,
+
+                `${booking.people ?? "-"} คน`
+            ];
+
+
+            values.forEach(
+                value => {
+
+                    const cell =
+                        document.createElement(
+                            "td"
+                        );
+
+
+                    cell.textContent =
+                        value;
+
+
+                    row.appendChild(
+                        cell
+                    );
+                }
+            );
+
+
+            // =====================================
+            // สถานะ
+            // =====================================
+
+            const statusCell =
+                document.createElement(
+                    "td"
+                );
+
+
+            const status =
+                document.createElement(
+                    "span"
+                );
+
+
+            const currentStatus =
+                statusLabels[
+                    booking.status
+                ]
+                    ? booking.status
+                    : "pending";
+
+
+            status.className =
+                `booking-status ${currentStatus}`;
+
+
+            status.textContent =
+                statusLabels[
+                    booking.status
+                ] ||
+                booking.status ||
+                "ไม่ระบุ";
+
+
+            statusCell.appendChild(
+                status
+            );
+
+
+            row.appendChild(
+                statusCell
+            );
+
+
+            // =====================================
+            // ปุ่ม
+            // =====================================
+
+            const actionCell =
+                document.createElement(
+                    "td"
+                );
+
+
+            const actions =
+                document.createElement(
+                    "div"
+                );
+
+
+            actions.className =
+                "booking-action";
+
+
+            if (
+                booking.status ===
+                "pending"
+            ) {
+
+                const approve =
+                    document.createElement(
+                        "button"
+                    );
+
+
+                approve.type =
+                    "button";
+
+
+                approve.className =
+                    "booking-approve";
+
+
+                approve.textContent =
+                    "อนุมัติ";
+
+
+                approve.dataset.id =
+                    booking.id;
+
+
+                approve.dataset.status =
+                    "approved";
+
+
+                const reject =
+                    document.createElement(
+                        "button"
+                    );
+
+
+                reject.type =
+                    "button";
+
+
+                reject.className =
+                    "booking-reject";
+
+
+                reject.textContent =
+                    "ปฏิเสธ";
+
+
+                reject.dataset.id =
+                    booking.id;
+
+
+                reject.dataset.status =
+                    "rejected";
+
+
+                actions.append(
+                    approve,
+                    reject
+                );
+
+            } else {
+
+                actions.textContent =
+                    "ดำเนินการแล้ว";
+            }
+
+
+            actionCell.appendChild(
+                actions
+            );
+
+
+            row.appendChild(
+                actionCell
+            );
+
+
+            tbody.appendChild(
+                row
+            );
         }
+    );
+}
 
-        try {
-            button.disabled = true;
 
-            await updateDoc(doc(db, "bookings", bookingId), {
-                status: newStatus
-            });
+// =====================================
+// อนุมัติ / ปฏิเสธคำขอจอง
+// =====================================
 
-            alert(`${actionName}คำขอจองสำเร็จ`);
-            await loadBookings();
+document
+    .getElementById(
+        "bookingRequestsBody"
+    )
+    ?.addEventListener(
+        "click",
+        async event => {
 
-        } catch (error) {
-            console.error("เปลี่ยนสถานะคำขอไม่สำเร็จ:", error);
-            alert("ไม่สามารถเปลี่ยนสถานะได้ กรุณาตรวจสอบ Firestore Rules");
-            button.disabled = false;
+            const button =
+                event.target.closest(
+                    ".booking-approve, .booking-reject"
+                );
+
+
+            if (
+                !button ||
+                button.disabled
+            ) {
+
+                return;
+            }
+
+
+            const bookingId =
+                button.dataset.id;
+
+
+            const newStatus =
+                button.dataset.status;
+
+
+            const actionName =
+                newStatus ===
+                    "approved"
+                    ? "อนุมัติ"
+                    : "ปฏิเสธ";
+
+
+            if (
+                !confirm(
+                    `ยืนยันการ${actionName}คำขอจองนี้หรือไม่?`
+                )
+            ) {
+
+                return;
+            }
+
+
+            try {
+
+                button.disabled =
+                    true;
+
+
+                await updateDoc(
+                    doc(
+                        db,
+                        "bookings",
+                        bookingId
+                    ),
+                    {
+                        status:
+                            newStatus
+                    }
+                );
+
+
+                alert(
+                    `${actionName}คำขอจองสำเร็จ`
+                );
+
+
+                await loadBookings();
+
+
+            } catch (error) {
+
+                console.error(
+                    "เปลี่ยนสถานะคำขอไม่สำเร็จ:",
+                    error
+                );
+
+
+                alert(
+                    "ไม่สามารถเปลี่ยนสถานะได้ กรุณาตรวจสอบ Firestore Rules"
+                );
+
+
+                button.disabled =
+                    false;
+            }
         }
-    });
+    );
 
-// กรองตามสถานะ
-document.getElementById("bookingStatusFilter")
-    ?.addEventListener("change", renderBookingRequests);
 
-// รีเฟรชรายการ
-document.getElementById("refreshBookings")
-    ?.addEventListener("click", loadBookings);
+// =====================================
+// กรองสถานะ Booking
+// =====================================
+
+document
+    .getElementById(
+        "bookingStatusFilter"
+    )
+    ?.addEventListener(
+        "change",
+        renderBookingRequests
+    );
+
+
+// =====================================
+// รีเฟรช Booking
+// =====================================
+
+document
+    .getElementById(
+        "refreshBookings"
+    )
+    ?.addEventListener(
+        "click",
+        loadBookings
+    );
