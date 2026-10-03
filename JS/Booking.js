@@ -325,22 +325,31 @@ function selectRoom(button) {
     };
 
     const modalRoom = document.getElementById("modalRoom");
-    const peopleInput = document.getElementById("people");
+    const modalPeople = document.getElementById("modalPeople");
 
     if (modalRoom) {
         modalRoom.textContent = selectedRoom.name;
     }
 
-    if (peopleInput) {
-        peopleInput.max = String(selectedRoom.capacity);
+    // นำข้อมูลจากหน้าค้นหามาใส่ใน Popup
+    const date = document.getElementById("bookingDate").value;
+    const start = document.getElementById("startTime").value;
+    const end = document.getElementById("endTime").value;
+    const people = document.getElementById("people").value;
+
+    document.getElementById("modalBookingDate").value = date;
+    document.getElementById("modalStartTime").value = start;
+    document.getElementById("modalEndTime").value = end;
+
+    if (modalPeople) {
+        modalPeople.value = people;
+        modalPeople.max = String(selectedRoom.capacity);
     }
 
     updateSelectedRoomStyle();
     updateSummary();
 
-    // เปิดป๊อปอัปให้ตรงกับ CSS
-    document.getElementById("confirmModal")
-        ?.classList.add("active");
+    openConfirmModal();
 }
 
 function updateSelectedRoomStyle() {
@@ -438,37 +447,37 @@ function resetSummaryRoom() {
 // ตรวจสอบข้อมูลก่อนจอง
 // ==========================================
 
+
 function validateBooking() {
-    const bookingDate = document.getElementById("bookingDate")?.value;
-    const startTime = document.getElementById("startTime")?.value;
-    const endTime = document.getElementById("endTime")?.value;
-    const people = Number(document.getElementById("people")?.value);
+    const date = document.getElementById("modalBookingDate").value;
+    const start = document.getElementById("modalStartTime").value;
+    const end = document.getElementById("modalEndTime").value;
+    const people = Number(document.getElementById("modalPeople").value);
 
     if (!selectedRoom) {
         alert("กรุณาเลือกห้องก่อน");
         return false;
     }
 
-    if (!bookingDate) {
+    if (!date) {
         alert("กรุณาเลือกวันที่จอง");
         return false;
     }
 
     const today = new Date();
     today.setHours(0, 0, 0, 0);
-    const selectedDate = new Date(`${bookingDate}T00:00:00`);
 
-    if (Number.isNaN(selectedDate.getTime()) || selectedDate < today) {
+    if (new Date(date + "T00:00:00") < today) {
         alert("ไม่สามารถจองย้อนหลังได้");
         return false;
     }
 
-    if (!startTime || !endTime) {
+    if (!start || !end) {
         alert("กรุณาเลือกเวลาเริ่มต้นและเวลาสิ้นสุด");
         return false;
     }
 
-    if (startTime >= endTime) {
+    if (start >= end) {
         alert("เวลาสิ้นสุดต้องมากกว่าเวลาเริ่มต้น");
         return false;
     }
@@ -491,28 +500,32 @@ function validateBooking() {
 // ==========================================
 
 
+
 function openConfirmModal() {
     if (!selectedRoom) {
         alert("กรุณาเลือกห้องก่อน");
         return;
     }
 
-    const modalRoom = document.getElementById("modalRoom");
-    if (modalRoom) {
-        modalRoom.textContent = selectedRoom.name;
-    }
+    const modal = document.getElementById("confirmModal");
 
-    document.getElementById("confirmModal")
-        ?.classList.add("show");
+    if (modal) {
+        modal.classList.add("show");
+    } else {
+        console.error("ไม่พบ confirmModal");
+    }
 }
 
 function closeConfirmModal() {
-    document.getElementById("confirmModal")?.classList.remove("show");
+    document.getElementById("confirmModal")
+        ?.classList.remove("show");
 }
+
 
 // ==========================================
 // บันทึกการจอง
 // ==========================================
+
 
 async function confirmBooking() {
     if (!currentUser) {
@@ -524,17 +537,26 @@ async function confirmBooking() {
 
     const button = document.getElementById("modalConfirm");
 
+    const bookingDate =
+        document.getElementById("modalBookingDate").value;
+    const startTime =
+        document.getElementById("modalStartTime").value;
+    const endTime =
+        document.getElementById("modalEndTime").value;
+    const people =
+        Number(document.getElementById("modalPeople").value);
+
     try {
-        if (button) button.disabled = true;
+        button.disabled = true;
 
         await addDoc(collection(db, "bookings"), {
             userId: currentUser.uid,
             roomId: selectedRoom.id,
             roomName: selectedRoom.name,
-            bookingDate: document.getElementById("bookingDate").value,
-            startTime: document.getElementById("startTime").value,
-            endTime: document.getElementById("endTime").value,
-            people: Number(document.getElementById("people").value),
+            bookingDate,
+            startTime,
+            endTime,
+            people,
             status: "pending",
             createdAt: serverTimestamp()
         });
@@ -543,15 +565,17 @@ async function confirmBooking() {
 
         closeConfirmModal();
         clearBookingForm();
+
         await loadBookingHistory();
 
     } catch (error) {
         console.error("บันทึกการจองไม่สำเร็จ:", error);
         alert("ไม่สามารถบันทึกการจองได้ กรุณาตรวจสอบ Firestore Rules");
     } finally {
-        if (button) button.disabled = false;
+        button.disabled = false;
     }
 }
+
 
 // ==========================================
 // ล้างข้อมูล
@@ -607,6 +631,7 @@ function setupBookingEvents() {
 
     document.getElementById("modalConfirm")
         ?.addEventListener("click", confirmBooking);
+
 
     document.getElementById("clearButton")
         ?.addEventListener("click", clearBookingForm);

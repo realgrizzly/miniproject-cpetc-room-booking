@@ -1724,3 +1724,115 @@ body {
         grid-template-columns: 1fr;
     }
 }
+
+
+/* Booking Modal */
+#confirmModal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+#confirmModal.show {
+    display: flex;
+}
+
+#confirmModal .modal-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.75);
+    backdrop-filter: blur(6px);
+}
+
+#confirmModal .modal-box {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 470px;
+    max-height: 90vh;
+    overflow-y: auto;
+    padding: 30px;
+    border: 1px solid rgba(255,255,255,.12);
+    border-radius: 18px;
+    background: #291711;
+    color: #f5eee9;
+    box-shadow: 0 20px 60px rgba(0,0,0,.5);
+}
+
+#confirmModal .modal-box h2,
+#confirmModal .modal-box p {
+    text-align: center;
+}
+
+#confirmModal .modal-booking-form {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-top: 20px;
+}
+
+#confirmModal .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+#confirmModal input {
+    width: 100%;
+    min-width: 0;
+    padding: 14px;
+    border: 1px solid #633a27;
+    border-radius: 10px;
+    background: #180e0b;
+    color: white;
+    box-sizing: border-box;
+}
+
+#confirmModal .modal-summary {
+    display: flex;
+    justify-content: space-between;
+    padding: 14px;
+    margin-top: 20px;
+    border-radius: 10px;
+    background: rgba(0,0,0,.2);
+}
+
+#confirmModal .modal-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 22px;
+}
+
+#confirmModal .modal-actions button {
+    flex: 1;
+    min-height: 44px;
+    border: 1px solid #633a27;
+    border-radius: 10px;
+    background: #352219;
+    color: white;
+    cursor: pointer;
+}
+
+#confirmModal #modalConfirm {
+    background: #c9783e;
+    border-color: #c9783e;
+}
+
+#confirmModal .modal-actions button:disabled {
+    opacity: .5;
+    cursor: not-allowed;
+}
+
+@media (max-width: 480px) {
+    #confirmModal .modal-box {
+        padding: 20px;
+    }
+
+    #confirmModal .modal-booking-form {
+        grid-template-columns: 1fr;
+    }
+}

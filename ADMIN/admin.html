@@ -70,7 +70,6 @@
 
     <!-- MAIN -->
     <main class="admin-main">
-
         <section class="page-title">
             <span class="page-label">ADMIN PANEL</span>
             <h1>จัดการระบบ</h1>
@@ -256,6 +255,51 @@
             </div>
 
         </section>
+
+
+<!-- จัดการคำขอจองห้อง -->
+<section class="card booking-admin-card" id="bookingRequests">
+    <div class="section-header">
+        <div>
+            <span class="section-label">REQUESTS FROM USERS</span>
+            <h2>จัดการคำขอจองห้อง</h2>
+        </div>
+    </div>
+
+    <div class="booking-filter">
+        <label for="bookingStatusFilter">กรองตามสถานะ</label>
+        <select id="bookingStatusFilter">
+            <option value="all">ทั้งหมด</option>
+            <option value="pending">รออนุมัติ</option>
+            <option value="approved">อนุมัติแล้ว</option>
+            <option value="rejected">ปฏิเสธแล้ว</option>
+        </select>
+        <button type="button" id="refreshBookings">
+            <i class="fa-solid fa-rotate"></i> รีเฟรช
+        </button>
+    </div>
+
+    <div class="table-responsive">
+        <table class="booking-admin-table">
+            <thead>
+                <tr>
+                    <th>ห้อง</th>
+                    <th>ผู้จอง</th>
+                    <th>วันที่จอง</th>
+                    <th>เวลา</th>
+                    <th>จำนวนคน</th>
+                    <th>สถานะ</th>
+                    <th>จัดการ</th>
+                </tr>
+            </thead>
+            <tbody id="bookingRequestsBody">
+                <tr>
+                    <td colspan="7">กำลังโหลดคำขอจอง...</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</section>
 
     </main>
 

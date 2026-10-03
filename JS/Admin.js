@@ -61,7 +61,8 @@ onAuthStateChanged(auth, async function (user) {
 
         await Promise.all([
             loadUsers(),
-            loadRooms()
+            loadRooms(),
+            loadBookings()
         ]);
 
     } catch (error) {
@@ -757,3 +758,191 @@ if (logoutButton) {
         }
     });
 }
+
+
+// =====================================
+// จัดการคำขอจองห้อง
+// =====================================
+
+let allBookings = [];
+
+async function loadBookings() {
+    const tbody = document.getElementById("bookingRequestsBody");
+    if (!tbody) return;
+
+    tbody.innerHTML = `
+        <tr><td colspan="7">กำลังโหลดคำขอจอง...</td></tr>
+    `;
+
+    try {
+        const [bookingSnapshot, userSnapshot] = await Promise.all([
+            getDocs(collection(db, "bookings")),
+            getDocs(collection(db, "users"))
+        ]);
+
+        // สร้างแผนที่ UID -> ชื่อผู้ใช้
+        const userNames = new Map();
+        userSnapshot.forEach(userDoc => {
+            const user = userDoc.data();
+            userNames.set(userDoc.id, user.name || user.email || "-");
+        });
+
+        allBookings = bookingSnapshot.docs.map(item => {
+            const data = item.data();
+            return {
+                id: item.id,
+                ...data,
+                userName: userNames.get(data.userId) || "ไม่พบผู้ใช้"
+            };
+        });
+
+        // เรียงตามวันที่จองและเวลา
+        allBookings.sort((a, b) =>
+            `${b.bookingDate || ""} ${b.startTime || ""}`
+                .localeCompare(`${a.bookingDate || ""} ${a.startTime || ""}`)
+        );
+
+        renderBookingRequests();
+
+    } catch (error) {
+        console.error("โหลดคำขอจองไม่สำเร็จ:", error);
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="7">ไม่สามารถโหลดคำขอจองได้</td>
+            </tr>
+        `;
+    }
+}
+
+function renderBookingRequests() {
+    const tbody = document.getElementById("bookingRequestsBody");
+    const filter = document.getElementById("bookingStatusFilter");
+
+    if (!tbody) return;
+
+    const statusFilter = filter?.value || "all";
+
+    const bookings = allBookings.filter(booking =>
+        statusFilter === "all" || booking.status === statusFilter
+    );
+
+    tbody.innerHTML = "";
+
+    if (bookings.length === 0) {
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="7">ไม่พบคำขอจองในสถานะนี้</td>
+            </tr>
+        `;
+        return;
+    }
+
+    const statusLabels = {
+        pending: "รออนุมัติ",
+        approved: "อนุมัติแล้ว",
+        rejected: "ปฏิเสธแล้ว"
+    };
+
+    bookings.forEach(booking => {
+        const row = document.createElement("tr");
+
+        const values = [
+            booking.roomName || "-",
+            booking.userName,
+            booking.bookingDate || "-",
+            `${booking.startTime || "-"} - ${booking.endTime || "-"}`,
+            `${booking.people ?? "-"} คน`
+        ];
+
+        values.forEach(value => {
+            const cell = document.createElement("td");
+            cell.textContent = value;
+            row.appendChild(cell);
+        });
+
+        const statusCell = document.createElement("td");
+        const status = document.createElement("span");
+        const currentStatus = statusLabels[booking.status]
+            ? booking.status
+            : "pending";
+
+        status.className = `booking-status ${currentStatus}`;
+        status.textContent =
+            statusLabels[booking.status] || booking.status || "ไม่ระบุ";
+        statusCell.appendChild(status);
+        row.appendChild(statusCell);
+
+        const actionCell = document.createElement("td");
+        const actions = document.createElement("div");
+        actions.className = "booking-action";
+
+        if (booking.status === "pending") {
+            const approve = document.createElement("button");
+            approve.type = "button";
+            approve.className = "booking-approve";
+            approve.textContent = "อนุมัติ";
+            approve.dataset.id = booking.id;
+            approve.dataset.status = "approved";
+
+            const reject = document.createElement("button");
+            reject.type = "button";
+            reject.className = "booking-reject";
+            reject.textContent = "ปฏิเสธ";
+            reject.dataset.id = booking.id;
+            reject.dataset.status = "rejected";
+
+            actions.append(approve, reject);
+        } else {
+            actions.textContent = "ดำเนินการแล้ว";
+        }
+
+        actionCell.appendChild(actions);
+        row.appendChild(actionCell);
+        tbody.appendChild(row);
+    });
+}
+
+// อนุมัติหรือปฏิเสธคำขอ
+document.getElementById("bookingRequestsBody")
+    ?.addEventListener("click", async event => {
+        const button = event.target.closest(
+            ".booking-approve, .booking-reject"
+        );
+
+        if (!button || button.disabled) return;
+
+        const bookingId = button.dataset.id;
+        const newStatus = button.dataset.status;
+
+        const actionName = newStatus === "approved"
+            ? "อนุมัติ"
+            : "ปฏิเสธ";
+
+        if (!confirm(`ยืนยันการ${actionName}คำขอจองนี้หรือไม่?`)) {
+            return;
+        }
+
+        try {
+            button.disabled = true;
+
+            await updateDoc(doc(db, "bookings", bookingId), {
+                status: newStatus
+            });
+
+            alert(`${actionName}คำขอจองสำเร็จ`);
+            await loadBookings();
+
+        } catch (error) {
+            console.error("เปลี่ยนสถานะคำขอไม่สำเร็จ:", error);
+            alert("ไม่สามารถเปลี่ยนสถานะได้ กรุณาตรวจสอบ Firestore Rules");
+            button.disabled = false;
+        }
+    });
+
+// กรองตามสถานะ
+document.getElementById("bookingStatusFilter")
+    ?.addEventListener("change", renderBookingRequests);
+
+// รีเฟรชรายการ
+document.getElementById("refreshBookings")
+    ?.addEventListener("click", loadBookings);

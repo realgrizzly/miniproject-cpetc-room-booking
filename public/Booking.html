@@ -211,7 +211,9 @@
 
 
     
-<!-- BOOKING MODAL -->
+
+<
+<!-- Booking Modal -->
 <div class="modal" id="confirmModal">
     <div class="modal-overlay"></div>
 
@@ -224,47 +226,45 @@
         <p>กรุณาระบุวันและเวลาที่ต้องการใช้งาน</p>
 
         <div class="modal-summary">
-            <div>
-                <span>ห้องที่เลือก</span>
-                <strong id="modalRoom">-</strong>
-            </div>
+            <span>ห้องที่เลือก</span>
+            <strong id="modalRoom">-</strong>
         </div>
 
         <div class="modal-booking-form">
             <div class="form-group">
-                <label for="bookingDate">วันที่จอง</label>
-                <input type="date" id="bookingDate" required>
+                <label for="modalBookingDate">วันที่จอง</label>
+                <input type="date" id="modalBookingDate" required>
             </div>
 
             <div class="form-group">
-                <label for="startTime">เวลาเริ่มต้น</label>
-                <input type="time" id="startTime" required>
+                <label for="modalStartTime">เวลาเริ่มต้น</label>
+                <input type="time" id="modalStartTime" required>
             </div>
 
             <div class="form-group">
-                <label for="endTime">เวลาสิ้นสุด</label>
-                <input type="time" id="endTime" required>
+                <label for="modalEndTime">เวลาสิ้นสุด</label>
+                <input type="time" id="modalEndTime" required>
             </div>
 
             <div class="form-group">
-                <label for="people">จำนวนผู้ใช้งาน</label>
-                <input type="number" id="people"
+                <label for="modalPeople">จำนวนผู้ใช้งาน</label>
+                <input type="number" id="modalPeople"
                        min="1" placeholder="จำนวนคน" required>
             </div>
         </div>
 
         <div class="modal-actions">
-            <button type="button" class="modal-cancel"
-                    id="modalCancel">ยกเลิก</button>
-
-            <button type="button" class="modal-confirm"
-                    id="modalConfirm">
+            <button type="button" id="modalCancel">
+                ยกเลิก
+            </button>
+            <button type="button" id="modalConfirm">
                 <i class="fa-solid fa-check"></i>
                 ยืนยันการจอง
             </button>
         </div>
     </div>
 </div>
+
 
     <script type="module" src="../JS/Booking.js"></script>
     <script type="module" src="../src/user/navbar-user.js"></script>
