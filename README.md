@@ -92,7 +92,7 @@ composer require google/cloud-firestore
 
 ---
 
-## 🚀 Installation
+## 🚀  Installation
 
 ### 1. Clone Repository
 
@@ -114,7 +114,7 @@ cd miniproject-cpetc-room-booking
 composer install
 ```
 
-# ▶️ Running the Project
+## ▶️ Running the Project
 
 เนื่องจากระบบมี PHP API จึงควรเปิดผ่าน PHP Server แทนการเปิดด้วย Live Server
 
@@ -149,7 +149,7 @@ http://localhost:8000/
 http://localhost:8000/ADMIN/admin.html
 ```
 
-# 👨‍💻 Project
+## 👨‍💻 Project
 
 **Project:** CPETC Room Booking System
 
@@ -162,6 +162,6 @@ https://github.com/realgrizzly/miniproject-cpetc-room-booking
 
 ---
 
-# 📄 License
+## 📄 License
 
 This project is developed for educational and academic purposes.
