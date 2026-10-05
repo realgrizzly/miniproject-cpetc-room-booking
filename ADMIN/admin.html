@@ -133,6 +133,32 @@
                     </select>
                 </div>
 
+                <div class="form-group full">
+                    <label for="roomImage">รูปห้อง</label>
+                     <input
+                     type="file"
+                     id="roomImage"
+                     accept="image/jpeg,image/png,image/webp"
+                     >
+                     <small>
+                        รองรับ JPG, PNG และ WEBP ขนาดไม่เกิน 5MB
+                    </small>
+
+                    <img
+    id="roomImagePreview"
+    src=""
+    alt="ตัวอย่างรูปห้อง"
+    style="
+        display: none;
+        width: 250px;
+        height: 150px;
+        object-fit: cover;
+        border-radius: 10px;
+        margin-top: 10px;
+    "
+>
+</div>
+
             </div>
 
             <div class="form-buttons">
