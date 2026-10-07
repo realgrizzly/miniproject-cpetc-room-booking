@@ -1088,3 +1088,304 @@ body {
 #bookingRequests > p {
     color: #c9bfd5;
 }   
+
+/* =====================================================
+   ROOM IMAGE UPLOAD
+===================================================== */
+
+.room-upload-group {
+    width: 100%;
+}
+
+
+/* Label */
+
+.room-upload-group > label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.room-upload-group > label i {
+    color: #ff914d;
+}
+
+
+/* กล่องทั้งหมด */
+
+.room-upload-box {
+    width: 100%;
+    margin-top: 8px;
+    padding: 16px;
+
+    box-sizing: border-box;
+
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 14px;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(255, 255, 255, 0.055),
+            rgba(255, 255, 255, 0.025)
+        );
+
+    transition: 0.25s ease;
+}
+
+
+/* ==========================================
+   Preview Box
+========================================== */
+
+.room-upload-preview {
+
+    width: 100%;
+    height: 190px;
+
+    position: relative;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    overflow: hidden;
+
+    box-sizing: border-box;
+
+    border: 2px dashed
+        rgba(255, 255, 255, 0.18);
+
+    border-radius: 12px;
+
+    background:
+        rgba(0, 0, 0, 0.12);
+
+    cursor: pointer;
+
+    transition:
+        border-color 0.25s ease,
+        background 0.25s ease,
+        transform 0.25s ease;
+}
+
+
+.room-upload-preview:hover {
+
+    border-color:
+        rgba(255, 145, 77, 0.75);
+
+    background:
+        rgba(255, 145, 77, 0.045);
+
+    transform: translateY(-1px);
+}
+
+
+/* ==========================================
+   Placeholder
+========================================== */
+
+.room-upload-placeholder {
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    justify-content: center;
+
+    text-align: center;
+
+    gap: 6px;
+
+    color:
+        rgba(255, 255, 255, 0.62);
+}
+
+
+.room-upload-placeholder i {
+
+    font-size: 38px;
+
+    margin-bottom: 5px;
+
+    color: #ff914d;
+
+}
+
+
+.room-upload-placeholder strong {
+
+    font-size: 16px;
+
+    font-weight: 600;
+
+    color: #ffffff;
+
+}
+
+
+.room-upload-placeholder span {
+
+    font-size: 13px;
+
+    color:
+        rgba(255, 255, 255, 0.65);
+
+}
+
+
+.room-upload-placeholder small {
+
+    margin-top: 2px;
+
+    font-size: 11px;
+
+    color:
+        rgba(255, 255, 255, 0.42);
+
+}
+
+
+/* ==========================================
+   Preview Image
+========================================== */
+
+#roomImagePreview {
+
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+
+    display: none;
+
+}
+
+
+/* ==========================================
+   Choose Image Button
+========================================== */
+
+.choose-room-image {
+
+    width: 100%;
+
+    height: 44px;
+
+    margin-top: 13px;
+
+    border: 1px solid
+        rgba(255, 145, 77, 0.45);
+
+    border-radius: 9px;
+
+    background:
+        rgba(255, 145, 77, 0.08);
+
+    color: #ffad78;
+
+    font-family: inherit;
+
+    font-size: 13px;
+
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition: all 0.25s ease;
+
+}
+
+
+.choose-room-image i {
+
+    margin-right: 7px;
+
+}
+
+
+.choose-room-image:hover {
+
+    background:
+        linear-gradient(
+            135deg,
+            #ff914d,
+            #ff7138
+        );
+
+    border-color: #ff914d;
+
+    color: #ffffff;
+
+    box-shadow:
+        0 6px 18px
+        rgba(255, 113, 56, 0.22);
+
+    transform: translateY(-1px);
+
+}
+
+
+/* ==========================================
+   Selected File
+========================================== */
+
+.selected-room-file {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 8px;
+
+    min-height: 20px;
+
+    margin-top: 10px;
+
+    padding: 0 2px;
+
+    font-size: 12px;
+
+    color:
+        rgba(255, 255, 255, 0.45);
+
+}
+
+
+.selected-room-file i {
+
+    color: #ff914d;
+
+}
+
+
+.selected-room-file.has-file {
+
+    color:
+        rgba(255, 255, 255, 0.85);
+
+}
+
+
+/* ==========================================
+   Responsive
+========================================== */
+
+@media (max-width: 700px) {
+
+    .room-upload-box {
+
+        padding: 12px;
+
+    }
+
+    .room-upload-preview {
+
+        height: 160px;
+
+    }
+
+}

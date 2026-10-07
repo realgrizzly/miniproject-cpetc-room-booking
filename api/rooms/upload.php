@@ -2,117 +2,158 @@
 
 header('Content-Type: application/json; charset=utf-8');
 
-$uploadDir = __DIR__ . '/../../src/images/rooms/';
+try {
 
-if (!is_dir($uploadDir)) {
-    mkdir($uploadDir, 0777, true);
-}
+    // ==========================================
+    // โฟลเดอร์เก็บรูป
+    // ==========================================
 
-if (!isset($_FILES['image'])) {
-    http_response_code(400);
-
-    echo json_encode([
-        'success' => false,
-        'message' => 'ไม่พบไฟล์รูป'
-    ]);
-
-    exit;
-}
-
-$file = $_FILES['image'];
-
-if ($file['error'] !== UPLOAD_ERR_OK) {
-    http_response_code(400);
-
-    echo json_encode([
-        'success' => false,
-        'message' => 'เกิดข้อผิดพลาดในการอัปโหลด'
-    ]);
-
-    exit;
-}
+    $uploadDir = __DIR__ . '/../../src/images/rooms/';
 
 
-// ตรวจสอบขนาดไฟล์
-$maxSize = 5 * 1024 * 1024;
+    // ==========================================
+    // สร้างโฟลเดอร์ถ้ายังไม่มี
+    // ==========================================
 
-if ($file['size'] > $maxSize) {
+    if (!is_dir($uploadDir)) {
 
-    http_response_code(400);
+        if (!mkdir($uploadDir, 0777, true)) {
 
-    echo json_encode([
-        'success' => false,
-        'message' => 'ไฟล์ต้องมีขนาดไม่เกิน 5MB'
-    ]);
-
-    exit;
-}
-
-
-// ตรวจสอบประเภทไฟล์
-$allowedTypes = [
-    'image/jpeg' => 'jpg',
-    'image/png'  => 'png',
-    'image/webp' => 'webp'
-];
-
-$fileInfo =
-    finfo_open(FILEINFO_MIME_TYPE);
-
-$mimeType =
-    finfo_file(
-        $fileInfo,
-        $file['tmp_name']
-    );
-
-finfo_close($fileInfo);
+            throw new Exception(
+                'ไม่สามารถสร้างโฟลเดอร์ src/images/rooms ได้'
+            );
+        }
+    }
 
 
-if (!isset($allowedTypes[$mimeType])) {
+    // ==========================================
+    // ตรวจสอบว่ามีไฟล์หรือไม่
+    // ==========================================
 
-    http_response_code(400);
+    if (!isset($_FILES['image'])) {
 
-    echo json_encode([
-        'success' => false,
-        'message' => 'รองรับเฉพาะ JPG, PNG และ WEBP'
-    ]);
+        http_response_code(400);
 
-    exit;
-}
+        echo json_encode([
+            'success' => false,
+            'message' => 'ไม่พบไฟล์รูป'
+        ], JSON_UNESCAPED_UNICODE);
 
-
-// สร้างชื่อไฟล์ใหม่
-$fileName =
-    uniqid('room_', true)
-    . '.'
-    . $allowedTypes[$mimeType];
+        exit;
+    }
 
 
-$destination =
-    $uploadDir . $fileName;
+    $file = $_FILES['image'];
 
 
-// ย้ายไฟล์
-if (
-    !move_uploaded_file(
+    // ==========================================
+    // ตรวจสอบ Error
+    // ==========================================
+
+    if ($file['error'] !== UPLOAD_ERR_OK) {
+
+        throw new Exception(
+            'Upload error code: ' . $file['error']
+        );
+    }
+
+
+    // ==========================================
+    // ตรวจสอบขนาด
+    // ==========================================
+
+    if ($file['size'] > 5 * 1024 * 1024) {
+
+        throw new Exception(
+            'ไฟล์ต้องมีขนาดไม่เกิน 5MB'
+        );
+    }
+
+
+    // ==========================================
+    // ตรวจสอบนามสกุล
+    // ==========================================
+
+    $extension =
+        strtolower(
+            pathinfo(
+                $file['name'],
+                PATHINFO_EXTENSION
+            )
+        );
+
+
+    $allowedExtensions = [
+        'jpg',
+        'jpeg',
+        'png',
+        'webp'
+    ];
+
+
+    if (!in_array(
+        $extension,
+        $allowedExtensions,
+        true
+    )) {
+
+        throw new Exception(
+            'รองรับเฉพาะ JPG, JPEG, PNG และ WEBP'
+        );
+    }
+
+
+    // ==========================================
+    // สร้างชื่อไฟล์ใหม่
+    // ==========================================
+
+    $fileName =
+        'room_' .
+        uniqid('', true) .
+        '.' .
+        $extension;
+
+
+    $destination =
+        $uploadDir . $fileName;
+
+
+    // ==========================================
+    // ย้ายไฟล์
+    // ==========================================
+
+    if (!move_uploaded_file(
         $file['tmp_name'],
         $destination
-    )
-) {
+    )) {
+
+        throw new Exception(
+            'ไม่สามารถบันทึกรูปไปที่ src/images/rooms ได้'
+        );
+    }
+
+
+    // ==========================================
+    // สำเร็จ
+    // ==========================================
+
+    echo json_encode([
+        'success' => true,
+        'message' => 'อัปโหลดรูปสำเร็จ',
+        'fileName' => $fileName
+    ], JSON_UNESCAPED_UNICODE);
+
+    exit;
+
+
+} catch (Throwable $e) {
 
     http_response_code(500);
 
     echo json_encode([
         'success' => false,
-        'message' => 'ไม่สามารถบันทึกไฟล์ได้'
-    ]);
+        'message' => $e->getMessage()
+    ], JSON_UNESCAPED_UNICODE);
 
     exit;
 }
-
-
-// ส่งชื่อไฟล์กลับ
-echo json_encode([
-    'success' => true,
-    'fileName' => $fileName
-]);

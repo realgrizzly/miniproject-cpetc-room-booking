@@ -1285,3 +1285,495 @@ body {
 .history-table td {
     padding: 13px 10px;
 }
+
+/* ==========================================
+   DASHBOARD BOOKING LIST
+========================================== */
+
+.dashboard-booking-list {
+    width: 100%;
+}
+
+
+.dashboard-booking-item {
+    display: grid;
+
+    grid-template-columns:
+        1.5fr
+        1.5fr
+        auto;
+
+    align-items: center;
+
+    gap: 20px;
+
+    padding: 18px 20px;
+
+    border-bottom:
+        1px solid rgba(255,255,255,.07);
+}
+
+
+.dashboard-booking-item:last-child {
+    border-bottom: none;
+}
+
+
+/* ห้อง */
+
+.dashboard-booking-room {
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
+}
+
+
+.booking-room-icon {
+
+    width: 44px;
+    height: 44px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 12px;
+
+    background:
+        rgba(255,133,66,.12);
+
+    color: #ff914d;
+
+    flex-shrink: 0;
+}
+
+
+.dashboard-booking-room strong {
+
+    display: block;
+
+    color: #fff;
+
+    font-size: 15px;
+}
+
+
+.dashboard-booking-room span {
+
+    display: block;
+
+    margin-top: 5px;
+
+    color:
+        rgba(255,255,255,.55);
+
+    font-size: 12px;
+}
+
+
+/* เวลา / จำนวนคน */
+
+.dashboard-booking-info {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 25px;
+
+    color:
+        rgba(255,255,255,.75);
+
+    font-size: 13px;
+}
+
+
+.dashboard-booking-info span {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 7px;
+}
+
+
+.dashboard-booking-info i {
+
+    color: #ff914d;
+}
+
+
+/* Status */
+
+.dashboard-booking-status {
+
+    padding: 7px 13px;
+
+    border-radius: 20px;
+
+    font-size: 11px;
+
+    font-weight: 600;
+
+    white-space: nowrap;
+}
+
+
+.dashboard-booking-status.approved {
+
+    background:
+        rgba(55,190,100,.15);
+
+    color: #6ee796;
+}
+
+
+.dashboard-booking-status.pending {
+
+    background:
+        rgba(255,170,60,.15);
+
+    color: #ffb75e;
+}
+
+
+.dashboard-booking-status.cancelled,
+.dashboard-booking-status.rejected {
+
+    background:
+        rgba(235,70,70,.15);
+
+    color: #ff7777;
+}
+
+
+/* Mobile */
+
+@media (max-width: 768px) {
+
+    .dashboard-booking-item {
+
+        grid-template-columns: 1fr;
+
+        gap: 12px;
+
+    }
+
+
+    .dashboard-booking-info {
+
+        flex-wrap: wrap;
+
+        gap: 12px;
+
+    }
+
+
+    .dashboard-booking-status {
+
+        width: fit-content;
+
+    }
+
+}
+
+/* ==========================================
+   HERO SLIDER - FADE
+========================================== */
+
+.hero-slider {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+.slider-container {
+    position: relative;
+    width: 100%;
+    height: 600px;
+    overflow: hidden;
+    background: #24120d;
+}
+
+
+/* ==========================================
+   SLIDE
+========================================== */
+
+.hero-slide {
+    position: absolute;
+    inset: 0;
+
+    width: 100%;
+    height: 140%;
+
+    opacity: 0;
+
+    visibility: hidden;
+
+    transition:
+        opacity 1.2s ease-in-out,
+        visibility 1.2s ease-in-out;
+
+    pointer-events: none;
+}
+
+.hero-slide.active {
+    opacity: 1;
+
+    visibility: visible;
+
+    pointer-events: auto;
+}
+
+
+/* ==========================================
+   IMAGE
+========================================== */
+
+.hero-slide img {
+    width: 100%;
+    height: 90%;
+
+    display: block;
+
+    object-fit:none;
+}
+
+
+/* ==========================================
+   OVERLAY
+========================================== */
+
+.hero-overlay {
+    position: absolute;
+
+    inset: 0;
+
+    display: flex;
+
+    align-items: center;
+
+    padding: 40px 8%;
+
+    background:
+        linear-gradient(
+            90deg,
+            rgba(25, 10, 5, 0.90) 0%,
+            rgba(25, 10, 5, 0.65) 40%,
+            rgba(25, 10, 5, 0.25) 75%,
+            rgba(25, 10, 5, 0.08) 100%
+        );
+}
+
+
+/* ==========================================
+   CONTENT
+========================================== */
+
+.hero-content {
+    max-width: 650px;
+    color: #fff;
+}
+
+.hero-tag {
+    display: inline-block;
+
+    margin-bottom: 12px;
+
+    font-size: 13px;
+    font-weight: 700;
+
+    letter-spacing: 2px;
+
+    color: #ff914d;
+}
+
+.hero-content h1 {
+    margin: 0 0 15px;
+
+    font-size: clamp(
+        32px,
+        4vw,
+        58px
+    );
+
+    line-height: 1.1;
+
+    font-weight: 800;
+}
+
+.hero-content h1 span {
+    color: #ff914d;
+}
+
+.hero-content p {
+    margin: 0 0 25px;
+
+    max-width: 520px;
+
+    color: rgba(
+        255,
+        255,
+        255,
+        0.78
+    );
+
+    font-size: 16px;
+
+    line-height: 1.7;
+}
+
+
+/* ==========================================
+   BUTTON
+========================================== */
+
+.hero-button {
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 10px;
+
+    padding: 13px 22px;
+
+    border-radius: 10px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #ff984f,
+            #e96d28
+        );
+
+    color: #fff;
+
+    text-decoration: none;
+
+    font-weight: 700;
+
+    transition:
+        transform 0.25s ease,
+        box-shadow 0.25s ease;
+}
+
+.hero-button:hover {
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 12px 30px
+        rgba(233, 109, 40, 0.30);
+}
+
+
+/* ==========================================
+   ARROWS
+========================================== */
+
+.slider-arrow {
+    position: absolute;
+
+    top: 50%;
+
+    transform: translateY(-50%);
+
+    width: 48px;
+    height: 48px;
+
+    border: 1px solid
+        rgba(255,255,255,0.25);
+
+    border-radius: 50%;
+
+    background:
+        rgba(20, 10, 7, 0.55);
+
+    color: #fff;
+
+    cursor: pointer;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    z-index: 10;
+
+    backdrop-filter: blur(8px);
+
+    transition:
+        background 0.25s ease,
+        transform 0.25s ease;
+}
+
+.slider-arrow:hover {
+    background: #ff7e36;
+
+    transform:
+        translateY(-50%)
+        scale(1.08);
+}
+
+.slider-prev {
+    left: 25px;
+}
+
+.slider-next {
+    right: 25px;
+}
+
+
+/* ==========================================
+   DOTS
+========================================== */
+
+.slider-dots {
+    position: absolute;
+
+    bottom: 20px;
+
+    left: 50%;
+
+    transform: translateX(-50%);
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 8px;
+
+    z-index: 10;
+}
+
+.slider-dot {
+    width: 9px;
+    height: 9px;
+
+    padding: 0;
+
+    border: none;
+
+    border-radius: 50%;
+
+    background:
+        rgba(255,255,255,0.45);
+
+    cursor: pointer;
+
+    transition:
+        width 0.35s ease,
+        background 0.35s ease;
+}
+
+.slider-dot.active {
+    width: 28px;
+
+    border-radius: 10px;
+
+    background: #ff8a45;
+}

@@ -1,4 +1,3 @@
-
 import { auth } from "../config/firebase-config.js";
 import {
   sendPasswordResetEmail

@@ -1,4 +1,3 @@
-
 import {
     onAuthStateChanged,
     signOut
@@ -7,12 +6,12 @@ import {
 import {
     doc,
     getDoc,
-    collection,
     getDocs,
-    addDoc,
-    serverTimestamp,
+    collection,
     query,
-    where
+    where,
+    addDoc,
+    serverTimestamp
 } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
 
 import { auth, db } from "../config/firebase-config.js";
@@ -219,17 +218,94 @@ function renderRooms(rooms) {
         if (type === "lecture") icon = "fa-chalkboard";
         if (type === "laboratory") icon = "fa-flask";
 
-        const image = document.createElement("div");
-        image.className = "room-image";
+    const image = document.createElement("div");
+image.className = "room-image";
 
-        const roomIcon = document.createElement("i");
-        roomIcon.className = `fa-solid ${icon}`;
-        image.appendChild(roomIcon);
+// ==========================================
+// แสดงรูปห้อง
+// ==========================================
 
-        const status = document.createElement("span");
-        status.className = "room-status available";
-        status.textContent = "ว่าง";
-        image.appendChild(status);
+const imageValue = String(room.image || "").trim();
+
+if (imageValue) {
+
+    const roomImage = document.createElement("img");
+
+    // Firestore เก็บชื่อไฟล์ เช่น
+    // CPE613.jpeg
+    const fileName = imageValue
+        .replace(/\\/g, "/")
+        .split("/")
+        .pop();
+
+    // รูปอยู่ที่ src/images/rooms/
+    roomImage.src =
+        `../src/images/rooms/${encodeURIComponent(fileName)}`;
+
+    roomImage.alt =
+        room.roomName || "รูปห้อง";
+
+    roomImage.className =
+        "room-image-photo";
+
+    roomImage.loading = "lazy";
+
+    roomImage.onerror = function () {
+
+        console.error(
+            "โหลดรูปไม่สำเร็จ:",
+            this.src,
+            "ค่า image ใน Firestore:",
+            imageValue
+        );
+
+        this.remove();
+
+        const fallbackIcon =
+            document.createElement("i");
+
+        fallbackIcon.className =
+            `fa-solid ${icon}`;
+
+        fallbackIcon.style.fontSize =
+            "42px";
+
+        image.appendChild(
+            fallbackIcon
+        );
+    };
+
+    image.appendChild(roomImage);
+
+} else {
+
+    // ไม่มีรูป → แสดงไอคอน
+    const roomIcon =
+        document.createElement("i");
+
+    roomIcon.className =
+        `fa-solid ${icon}`;
+
+    roomIcon.style.fontSize =
+        "42px";
+
+    image.appendChild(roomIcon);
+}
+
+
+// ===============================
+// สถานะห้อง
+// ===============================
+
+const status =
+    document.createElement("span");
+
+status.className =
+    "room-status available";
+
+status.textContent = "ว่าง";
+
+image.appendChild(status);
 
         const content = document.createElement("div");
         content.className = "room-content";
@@ -373,31 +449,274 @@ function updateSelectedRoomStyle() {
 // ค้นหาห้อง
 // ==========================================
 
-function searchRooms() {
-    const type = document.getElementById("roomType")?.value || "all";
-    const people = Number(document.getElementById("people")?.value || 0);
+// ==========================================
+// ค้นหาห้อง + ตรวจสอบเวลาที่มีการจองแล้ว
+// ==========================================
 
-    const filtered = allRooms.filter(room => {
-        if (room.status !== "available") return false;
+// ==========================================
+// ค้นหาห้อง
+// ตรวจสอบประเภท + จำนวนคน + เวลาชน
+// ==========================================
 
-        const matchesType =
-            type === "all" || getRoomTypeValue(room.roomType) === type;
+// ==========================================
+// ค้นหาห้องว่าง + ตรวจเวลาชน
+// ==========================================
 
-        const matchesCapacity =
-            !people || Number(room.capacity || 0) >= people;
+async function searchRooms() {
 
-        return matchesType && matchesCapacity;
-    });
+    const bookingDate =
+        document.getElementById("bookingDate")?.value || "";
 
-    if (
-        selectedRoom &&
-        !filtered.some(room => room.id === selectedRoom.id)
-    ) {
-        selectedRoom = null;
-        resetSummaryRoom();
+    const startTime =
+        document.getElementById("startTime")?.value || "";
+
+    const endTime =
+        document.getElementById("endTime")?.value || "";
+
+    const type =
+        document.getElementById("roomType")?.value || "all";
+
+    const people =
+        Number(
+            document.getElementById("people")?.value || 0
+        );
+
+
+    // ==============================
+    // ตรวจข้อมูล
+    // ==============================
+
+    if (!bookingDate) {
+        alert("กรุณาเลือกวันที่จอง");
+        return;
     }
 
-    renderRooms(filtered);
+    if (!startTime) {
+        alert("กรุณาเลือกเวลาเริ่ม");
+        return;
+    }
+
+    if (!endTime) {
+        alert("กรุณาเลือกเวลาสิ้นสุด");
+        return;
+    }
+
+    if (startTime >= endTime) {
+        alert("เวลาสิ้นสุดต้องมากกว่าเวลาเริ่ม");
+        return;
+    }
+
+
+    try {
+
+        console.log("ค้นหา:", {
+            bookingDate,
+            startTime,
+            endTime
+        });
+
+
+        // ==============================
+        // ดึง Booking ของวันที่เลือก
+        // ==============================
+
+        const bookingQuery = query(
+            collection(db, "bookings"),
+            where(
+                "bookingDate",
+                "==",
+                bookingDate
+            )
+        );
+
+
+        const snapshot =
+            await getDocs(bookingQuery);
+
+
+        console.log(
+            "Booking วันที่เลือก:",
+            snapshot.docs.map(doc => ({
+                id: doc.id,
+                ...doc.data()
+            }))
+        );
+
+
+        // ==============================
+        // เอาเฉพาะ Booking ที่ยังใช้งาน
+        // ==============================
+
+        const bookings =
+            snapshot.docs
+                .map(doc => ({
+                    id: doc.id,
+                    ...doc.data()
+                }))
+                .filter(booking =>
+                    booking.status === "pending" ||
+                    booking.status === "approved"
+                );
+
+
+        // ==============================
+        // กรองห้อง
+        // ==============================
+
+        const filtered =
+            allRooms.filter(room => {
+
+                // ห้องต้อง available
+                if (
+                    room.status !== "available"
+                ) {
+                    return false;
+                }
+
+
+                // ประเภทห้อง
+                const matchesType =
+                    type === "all" ||
+                    getRoomTypeValue(
+                        room.roomType
+                    ) === type;
+
+
+                if (!matchesType) {
+                    return false;
+                }
+
+
+                // จำนวนคน
+                const matchesCapacity =
+                    !people ||
+                    Number(room.capacity || 0) >= people;
+
+
+                if (!matchesCapacity) {
+                    return false;
+                }
+
+
+                // ==============================
+                // Booking ของห้องนี้
+                // ==============================
+
+                const roomBookings =
+                    bookings.filter(booking =>
+                        String(
+                            booking.roomId
+                        ) === String(room.id)
+                    );
+
+
+                // ==============================
+                // ตรวจเวลาชน
+                // ==============================
+
+                const hasConflict =
+                    roomBookings.some(booking => {
+
+                        const bookedStart =
+                            String(
+                                booking.startTime || ""
+                            );
+
+                        const bookedEnd =
+                            String(
+                                booking.endTime || ""
+                            );
+
+
+                        // เวลาชนกัน
+                        return (
+                            startTime < bookedEnd &&
+                            endTime > bookedStart
+                        );
+
+                    });
+
+
+                // ==============================
+                // ถ้าเวลาชน
+                // ไม่แสดงห้อง
+                // ==============================
+
+                if (hasConflict) {
+
+                    console.log(
+                        "❌ ห้องไม่ว่าง:",
+                        room.roomName,
+                        roomBookings
+                    );
+
+                    return false;
+                }
+
+
+                // ห้องว่าง
+                return true;
+
+            });
+
+
+        console.log(
+            "✅ ห้องที่ค้นพบ:",
+            filtered
+        );
+
+
+        // ==============================
+        // ถ้าห้องที่เลือกอยู่ไม่ว่างแล้ว
+        // ==============================
+
+        if (
+            selectedRoom &&
+            !filtered.some(
+                room =>
+                    String(room.id) ===
+                    String(selectedRoom.id)
+            )
+        ) {
+
+            selectedRoom = null;
+
+            resetSummaryRoom();
+
+        }
+
+
+        // ==============================
+        // แสดงห้อง
+        // ==============================
+
+        renderRooms(filtered);
+
+
+    } catch (error) {
+
+        console.error(
+            "SEARCH ROOM ERROR:",
+            error
+        );
+
+        console.error(
+            "CODE:",
+            error.code
+        );
+
+        console.error(
+            "MESSAGE:",
+            error.message
+        );
+
+
+        alert(
+            "ไม่สามารถตรวจสอบเวลาการจองได้"
+        );
+
+    }
+
 }
 
 // ==========================================

@@ -9,7 +9,9 @@ import {
     doc,
     getDoc,
     updateDoc,
-    deleteDoc
+    deleteDoc,
+    addDoc,
+    serverTimestamp
 } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
 
 import { auth, db } from "../config/firebase-config.js";
@@ -858,90 +860,144 @@ async function loadRooms() {
 
 async function addRoom() {
 
+    const roomName =
+        document.getElementById("roomName").value.trim();
+
+    const roomType =
+        document.getElementById("roomType").value;
+
+    const capacityInput =
+        document.getElementById("capacity").value;
+
+    const capacity =
+        Number(capacityInput);
+
+    const building =
+        document.getElementById("building").value.trim();
+
+    const equipment =
+        document.getElementById("equipment").value.trim();
+
+    const status =
+        document.getElementById("status").value;
+
+
+    // ===============================
+    // รูป
+    // ===============================
+
+    const imageInput =
+        document.getElementById("roomImage");
+
+    const imageFile =
+        imageInput?.files?.[0] || null;
+
+
+    // ===============================
+    // ตรวจสอบข้อมูล
+    // ===============================
+
+    if (
+        !roomName ||
+        !roomType ||
+        !capacityInput ||
+        !building
+    ) {
+
+        alert("กรุณากรอกข้อมูลห้องให้ครบ");
+
+        return;
+    }
+
+
+    if (
+        !Number.isInteger(capacity) ||
+        capacity < 1
+    ) {
+
+        alert(
+            "กรุณากรอกความจุตั้งแต่ 1 คนขึ้นไป"
+        );
+
+        return;
+    }
+
+
+    const saveButton =
+        document.getElementById(
+            "saveRoomButton"
+        );
+
+
     try {
 
-        const roomName =
-            document.getElementById(
-                "roomName"
-            ).value.trim();
+        if (saveButton) {
 
+            saveButton.disabled = true;
 
-        const roomType =
-            document.getElementById(
-                "roomType"
-            ).value.trim();
-
-
-        const capacity =
-            Number(
-                document.getElementById(
-                    "capacity"
-                ).value
-            );
-
-
-        const building =
-            document.getElementById(
-                "building"
-            ).value.trim();
-
-
-        const equipment =
-            document.getElementById(
-                "equipment"
-            ).value.trim();
-
-
-        const statusElement =
-            document.getElementById(
-                "status"
-            );
-
-
-        let status =
-            statusElement
-                ? statusElement.value
-                : "available";
-
-
-        // แปลงภาษาไทยเป็นค่าที่เก็บใน Firestore
-        if (
-            status ===
-            "พร้อมใช้งาน"
-        ) {
-
-            status =
-                "available";
+            saveButton.textContent =
+                "กำลังบันทึก...";
         }
 
 
-        if (
-            status ===
-            "ไม่พร้อมใช้งาน"
-        ) {
+        // =================================
+        // 1. Upload รูปจากเครื่อง
+        // =================================
 
-            status =
-                "unavailable";
-        }
+        let imageName = "";
 
 
-        // =====================================
-        // ตรวจสอบข้อมูล
-        // =====================================
+        if (imageFile) {
 
-        if (
-            !roomName ||
-            !roomType ||
-            !capacity
-        ) {
+            const formData =
+                new FormData();
 
-            alert(
-                "กรุณากรอกข้อมูลห้องให้ครบ"
+            formData.append(
+                "image",
+                imageFile
             );
 
-            return;
+
+            const uploadResponse =
+                await fetch(
+                    "../api/rooms/upload.php",
+                    {
+                        method: "POST",
+                        body: formData
+                    }
+                );
+
+
+            const uploadResult =
+                await uploadResponse.json();
+
+
+            if (
+                !uploadResponse.ok ||
+                !uploadResult.success
+            ) {
+
+                throw new Error(
+                    uploadResult.message ||
+                    "อัปโหลดรูปไม่สำเร็จ"
+                );
+            }
+
+
+            imageName =
+                uploadResult.fileName;
+
+
+            console.log(
+                "รูปที่อัปโหลด:",
+                imageName
+            );
         }
 
+
+        // =================================
+        // 2. เตรียมข้อมูลห้อง
+        // =================================
 
         const roomData = {
 
@@ -961,101 +1017,43 @@ async function addRoom() {
                 equipment,
 
             status:
-                status
+                status,
+
+            image:
+                imageName
         };
 
 
-        // =====================================
-        // แก้ไขห้อง
-        // =====================================
+        // =================================
+        // 3. บันทึก Firestore
+        // =================================
 
         if (editingRoomId) {
 
-            roomData.roomId =
-                editingRoomId;
-
-
-            const response =
-                await fetch(
-                    "../api/rooms/update.php",
-                    {
-                        method: "POST",
-
-                        headers: {
-                            "Content-Type":
-                                "application/json"
-                        },
-
-                        body:
-                            JSON.stringify(
-                                roomData
-                            )
-                    }
-                );
-
-
-            const result =
-                await response.json();
-
-
-            if (
-                !response.ok ||
-                !result.success
-            ) {
-
-                throw new Error(
-                    result.message ||
-                    "ไม่สามารถแก้ไขห้องได้"
-                );
-            }
+            await updateDoc(
+                doc(
+                    db,
+                    "rooms",
+                    editingRoomId
+                ),
+                roomData
+            );
 
 
             alert(
-                "แก้ไขห้องสำเร็จ"
+                "แก้ไขข้อมูลห้องสำเร็จ"
             );
 
-        }
+        } else {
 
-
-        // =====================================
-        // เพิ่มห้อง
-        // =====================================
-
-        else {
-
-            const response =
-                await fetch(
-                    "../api/rooms/create.php",
-                    {
-                        method: "POST",
-
-                        headers: {
-                            "Content-Type":
-                                "application/json"
-                        },
-
-                        body:
-                            JSON.stringify(
-                                roomData
-                            )
-                    }
-                );
-
-
-            const result =
-                await response.json();
-
-
-            if (
-                !response.ok ||
-                !result.success
-            ) {
-
-                throw new Error(
-                    result.message ||
-                    "ไม่สามารถเพิ่มห้องได้"
-                );
-            }
+            await addDoc(
+                collection(db, "rooms"),
+                {
+                    ...roomData,
+                    createdAt:
+                        serverTimestamp()
+                }
+            );
 
 
             alert(
@@ -1064,29 +1062,68 @@ async function addRoom() {
         }
 
 
-        // ล้างฟอร์ม
+        // =================================
+        // 4. ล้างฟอร์ม
+        // =================================
+
         clearRoomForm();
 
 
-        // โหลดรายการห้องใหม่
+        if (imageInput) {
+
+            imageInput.value = "";
+        }
+
+
+        const preview =
+            document.getElementById(
+                "roomImagePreview"
+            );
+
+
+        if (preview) {
+
+            preview.src = "";
+
+            preview.style.display =
+                "none";
+        }
+
+
+        // =================================
+        // 5. โหลดห้องใหม่
+        // =================================
+
         await loadRooms();
 
 
     } catch (error) {
 
         console.error(
-            "Add/Edit room error:",
+            "บันทึกข้อมูลห้องไม่สำเร็จ:",
             error
         );
 
 
         alert(
-            "เกิดข้อผิดพลาด: " +
+            "ไม่สามารถบันทึกข้อมูลห้องได้\n\n" +
             error.message
         );
+
+
+    } finally {
+
+        if (saveButton) {
+
+            saveButton.disabled = false;
+
+            saveButton.textContent =
+                editingRoomId
+                    ? "บันทึกการแก้ไข"
+                    : "เพิ่มห้อง";
+        }
     }
 }
-
 
 // =====================================
 // แสดงรายการห้อง
@@ -2316,3 +2353,208 @@ document
         "click",
         loadBookings
     );
+
+    // =====================================================
+// เลือกรูปห้อง + Preview
+// =====================================================
+
+const roomImageInput =
+    document.getElementById("roomImage");
+
+const chooseRoomImage =
+    document.getElementById("chooseRoomImage");
+
+const roomUploadPreview =
+    document.getElementById("roomUploadPreview");
+
+const roomImagePreview =
+    document.getElementById("roomImagePreview");
+
+const roomUploadPlaceholder =
+    document.getElementById(
+        "roomUploadPlaceholder"
+    );
+
+const selectedRoomFile =
+    document.getElementById(
+        "selectedRoomFile"
+    );
+
+
+// =====================================================
+// เปิดหน้าต่างเลือกไฟล์
+// =====================================================
+
+if (
+    chooseRoomImage &&
+    roomImageInput
+) {
+
+    chooseRoomImage.addEventListener(
+        "click",
+        function () {
+
+            roomImageInput.click();
+
+        }
+    );
+
+}
+
+
+// =====================================================
+// คลิกกรอบ Preview ก็เลือกไฟล์ได้
+// =====================================================
+
+if (
+    roomUploadPreview &&
+    roomImageInput
+) {
+
+    roomUploadPreview.addEventListener(
+        "click",
+        function () {
+
+            roomImageInput.click();
+
+        }
+    );
+
+}
+
+
+// =====================================================
+// เมื่อเลือกไฟล์
+// =====================================================
+
+if (roomImageInput) {
+
+    roomImageInput.addEventListener(
+        "change",
+        function () {
+
+            const file =
+                this.files?.[0];
+
+            if (!file) {
+                return;
+            }
+
+
+            // -----------------------------------------
+            // ตรวจสอบขนาด
+            // -----------------------------------------
+
+            if (
+                file.size >
+                5 * 1024 * 1024
+            ) {
+
+                alert(
+                    "ไฟล์ต้องมีขนาดไม่เกิน 5MB"
+                );
+
+                this.value = "";
+
+                return;
+            }
+
+
+            // -----------------------------------------
+            // ตรวจสอบประเภท
+            // -----------------------------------------
+
+            const allowedTypes = [
+
+                "image/jpeg",
+
+                "image/png",
+
+                "image/webp"
+
+            ];
+
+
+            if (
+                !allowedTypes.includes(
+                    file.type
+                )
+            ) {
+
+                alert(
+                    "รองรับเฉพาะ JPG, PNG และ WEBP"
+                );
+
+                this.value = "";
+
+                return;
+            }
+
+
+            // -----------------------------------------
+            // แสดง Preview
+            // -----------------------------------------
+
+            const reader =
+                new FileReader();
+
+
+            reader.onload =
+                function (event) {
+
+                    if (roomImagePreview) {
+
+                        roomImagePreview.src =
+                            event.target.result;
+
+                        roomImagePreview.style.display =
+                            "block";
+
+                    }
+
+
+                    if (
+                        roomUploadPlaceholder
+                    ) {
+
+                        roomUploadPlaceholder.style.display =
+                            "none";
+
+                    }
+
+                };
+
+
+            reader.readAsDataURL(file);
+
+
+            // -----------------------------------------
+            // แสดงชื่อไฟล์
+            // -----------------------------------------
+
+            const fileName =
+                selectedRoomFile?.querySelector(
+                    "span"
+                );
+
+
+            if (fileName) {
+
+                fileName.textContent =
+                    file.name;
+
+            }
+
+
+            if (selectedRoomFile) {
+
+                selectedRoomFile.classList.add(
+                    "has-file"
+                );
+
+            }
+
+        }
+    );
+
+}

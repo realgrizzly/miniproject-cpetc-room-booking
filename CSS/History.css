@@ -702,3 +702,68 @@ body {
     white-space: nowrap;
     flex-shrink: 0;
 }
+
+/* ==========================================
+   BOOKING ACTIONS - USER CANCEL
+========================================== */
+
+.booking-action-cell {
+    min-width: 110px;
+    white-space: nowrap;
+}
+
+.cancel-booking-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    min-width: 88px;
+    height: 34px;
+    padding: 0 11px;
+    border: 1px solid rgba(241, 120, 91, 0.35);
+    border-radius: 8px;
+    background: rgba(200, 76, 60, 0.10);
+    color: #f39a8f;
+    font-family: inherit;
+    font-size: 10px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.cancel-booking-btn:hover {
+    background: rgba(200, 76, 60, 0.22);
+    border-color: rgba(241, 120, 91, 0.65);
+    color: #ffb0a7;
+    transform: translateY(-1px);
+}
+
+.cancel-booking-btn:disabled {
+    opacity: 0.65;
+    cursor: wait;
+    transform: none;
+}
+
+.action-done-text,
+.action-disabled-text {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    color: #9e8c80;
+    font-size: 10px;
+    white-space: nowrap;
+}
+
+.action-done-text {
+    color: #9bc5a9;
+}
+
+@media (max-width: 768px) {
+    .booking-action-cell {
+        min-width: 100px;
+    }
+
+    .cancel-booking-btn {
+        width: 100%;
+    }
+}

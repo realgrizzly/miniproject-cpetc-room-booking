@@ -132,45 +132,45 @@
                         <option value="unavailable">ไม่พร้อมใช้งาน</option>
                     </select>
                 </div>
-
-                <div class="form-group full">
-                    <label for="roomImage">รูปห้อง</label>
-                     <input
-                     type="file"
-                     id="roomImage"
-                     accept="image/jpeg,image/png,image/webp"
-                     >
-                     <small>
-                        รองรับ JPG, PNG และ WEBP ขนาดไม่เกิน 5MB
-                    </small>
-
-                    <img
-    id="roomImagePreview"
-    src=""
-    alt="ตัวอย่างรูปห้อง"
-    style="
-        display: none;
-        width: 250px;
-        height: 150px;
-        object-fit: cover;
-        border-radius: 10px;
-        margin-top: 10px;
-    "
->
-</div>
-
+                
+                <div class="form-group full room-upload-group">
+                    <label for="roomImage"><i class="fa-solid fa-image"></i>รูปห้อง</label>
+                    
+                    <div class="room-upload-box">
+                        
+                        <!-- Preview -->
+                        <div class="room-upload-preview" id="roomUploadPreview">
+                            
+                            <!-- ตอนยังไม่มีรูป -->
+                            <div class="room-upload-placeholder" id="roomUploadPlaceholder">
+                                <i class="fa-solid fa-cloud-arrow-up"></i>
+                                <strong>เลือกรูปห้อง</strong>
+                                <span>คลิกเพื่อเลือกรูปจากเครื่อง</span>
+                                <small>JPG, PNG หรือ WEBP • ไม่เกิน 5MB</small>
+                            </div>
+                            
+                            <!-- รูป Preview -->
+                            <img id="roomImagePreview" src="" alt="ตัวอย่างรูปห้อง">
+                        </div>
+                        
+                        <!-- input จริง -->
+                        <input type="file" id="roomImage" accept="image/jpeg,image/png,image/webp" hidden>
+                        
+                        <!-- ปุ่มเลือกไฟล์ -->
+                        <button type="button" class="choose-room-image" id="chooseRoomImage"><i class="fa-solid fa-folder-open"></i>เลือกรูปจากเครื่อง</button>
+                        
+                        <!-- ชื่อไฟล์ -->
+                        <div class="selected-room-file" id="selectedRoomFile">
+                            <i class="fa-solid fa-file-image"></i>
+                            <span>ยังไม่ได้เลือกรูป</span>
+                        </div>
+                    </div>
+                </div>
             </div>
-
+            
             <div class="form-buttons">
-                <button class="btn btn-primary" id="saveRoomButton" type="button">
-                    <i class="fa-solid fa-plus"></i>
-                    เพิ่มห้อง
-                </button>
-
-                <button class="btn btn-secondary" id="clearRoomButton" type="button">
-                    <i class="fa-solid fa-rotate-left"></i>
-                    ล้างข้อมูล
-                </button>
+                <button class="btn btn-primary" id="saveRoomButton" type="button"><i class="fa-solid fa-plus"></i>เพิ่มห้อง</button>
+                <button class="btn btn-secondary" id="clearRoomButton" type="button"><i class="fa-solid fa-rotate-left"></i>ล้างข้อมูล</button>
             </div>
 
         </section>

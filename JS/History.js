@@ -10,7 +10,8 @@ import {
     query,
     where,
     doc,
-    getDoc
+    getDoc,
+    updateDoc
 } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
 
 import { auth, db } from "../config/firebase-config.js";
@@ -79,7 +80,7 @@ async function loadHistory(uid) {
         if (tbody) {
             tbody.innerHTML = `
                 <tr>
-                    <td colspan="5" class="empty-cell">
+                    <td colspan="6" class="empty-cell">
                         ไม่สามารถโหลดประวัติการจองได้
                     </td>
                 </tr>
@@ -148,7 +149,7 @@ function renderBookings(bookings) {
     if (bookings.length === 0) {
         tbody.innerHTML = `
             <tr>
-                <td colspan="5" class="empty-cell">
+                <td colspan="6" class="empty-cell">
                     <i class="fa-solid fa-calendar-xmark"></i>
                     ไม่พบประวัติการจอง
                 </td>
@@ -184,15 +185,152 @@ function renderBookings(bookings) {
 
         statusCell.appendChild(badge);
 
+        // ปุ่มจัดการ
+        const actionCell = document.createElement("td");
+        actionCell.className = "booking-action-cell";
+
+        if (canCancelBooking(booking)) {
+            const cancelButton = document.createElement("button");
+            cancelButton.type = "button";
+            cancelButton.className = "cancel-booking-btn";
+            cancelButton.innerHTML =
+                '<i class="fa-solid fa-ban"></i> ยกเลิก';
+
+            cancelButton.addEventListener("click", () => {
+                cancelBooking(booking, cancelButton);
+            });
+
+            actionCell.appendChild(cancelButton);
+        } else if (booking.status === "cancelled") {
+            const cancelledText = document.createElement("span");
+            cancelledText.className = "action-done-text";
+            cancelledText.innerHTML =
+                '<i class="fa-solid fa-check"></i> ยกเลิกแล้ว';
+            actionCell.appendChild(cancelledText);
+        } else if (isBookingPast(booking)) {
+            const pastText = document.createElement("span");
+            pastText.className = "action-disabled-text";
+            pastText.textContent = "เลยเวลา";
+            actionCell.appendChild(pastText);
+        } else {
+            const noActionText = document.createElement("span");
+            noActionText.className = "action-disabled-text";
+            noActionText.textContent = "-";
+            actionCell.appendChild(noActionText);
+        }
+
         row.append(
             roomCell,
             dateCell,
             timeCell,
             peopleCell,
-            statusCell
+            statusCell,
+            actionCell
         );
 
         tbody.appendChild(row);
+    });
+}
+
+// ตรวจสอบว่า User สามารถยกเลิกได้หรือไม่
+function canCancelBooking(booking) {
+    const cancelableStatus =
+        booking.status === "pending" ||
+        booking.status === "approved";
+
+    return cancelableStatus && !isBookingPast(booking);
+}
+
+// ตรวจสอบว่าถึงเวลาใช้งานไปแล้วหรือยัง
+function isBookingPast(booking) {
+    if (!booking.bookingDate) return false;
+
+    const startTime = booking.startTime || "00:00";
+    const bookingDateTime = new Date(
+        `${booking.bookingDate}T${startTime}:00`
+    );
+
+    if (Number.isNaN(bookingDateTime.getTime())) {
+        return false;
+    }
+
+    return bookingDateTime.getTime() <= Date.now();
+}
+
+// ยกเลิกการจอง
+async function cancelBooking(booking, button) {
+    if (!canCancelBooking(booking)) {
+        alert("ไม่สามารถยกเลิกรายการจองนี้ได้");
+        return;
+    }
+
+    const confirmCancel = confirm(
+        `ต้องการยกเลิกการจอง ${booking.roomName || "ห้องนี้"} หรือไม่?\n\n` +
+        `วันที่: ${formatDate(booking.bookingDate)}\n` +
+        `เวลา: ${booking.startTime || "-"} - ${booking.endTime || "-"}`
+    );
+
+    if (!confirmCancel) return;
+
+    try {
+        button.disabled = true;
+        button.innerHTML =
+            '<i class="fa-solid fa-spinner fa-spin"></i> กำลังยกเลิก...';
+
+        await updateDoc(
+            doc(db, "bookings", booking.id),
+            {
+                status: "cancelled"
+            }
+        );
+
+        // อัปเดตข้อมูลในหน้าโดยไม่ต้องโหลดใหม่ทั้งหน้า
+        booking.status = "cancelled";
+
+        updateStats();
+        renderBookings(getFilteredBookings());
+
+        alert("ยกเลิกการจองเรียบร้อยแล้ว");
+
+    } catch (error) {
+        console.error("ยกเลิกการจองไม่สำเร็จ:", error);
+
+        button.disabled = false;
+        button.innerHTML =
+            '<i class="fa-solid fa-ban"></i> ยกเลิก';
+
+        alert(
+            "ไม่สามารถยกเลิกการจองได้\n" +
+            (error.message || "กรุณาลองใหม่อีกครั้ง")
+        );
+    }
+}
+
+// คืนรายการตามตัวกรองปัจจุบัน
+function getFilteredBookings() {
+    const searchInput = document.getElementById("searchInput");
+    const statusFilter = document.getElementById("statusFilter");
+
+    const keyword = searchInput
+        ? searchInput.value.trim().toLowerCase()
+        : "";
+
+    const status = statusFilter
+        ? statusFilter.value
+        : "all";
+
+    return allBookings.filter((booking) => {
+        const roomName =
+            (booking.roomName || "").toLowerCase();
+
+        const matchName =
+            roomName.includes(keyword);
+
+        const matchStatus =
+            status === "all" ||
+            booking.status === status;
+
+        return matchName && matchStatus;
     });
 }
 
@@ -212,21 +350,7 @@ function formatDate(date) {
 
 // ค้นหาและกรอง
 function filterBookings() {
-    const keyword = document.getElementById("searchInput")
-        .value.trim().toLowerCase();
-
-    const status = document.getElementById("statusFilter").value;
-
-    const filtered = allBookings.filter((booking) => {
-        const roomName = (booking.roomName || "").toLowerCase();
-
-        const matchName = roomName.includes(keyword);
-        const matchStatus = status === "all" || booking.status === status;
-
-        return matchName && matchStatus;
-    });
-
-    renderBookings(filtered);
+    renderBookings(getFilteredBookings());
 }
 
 document.getElementById("searchInput")
@@ -263,7 +387,7 @@ function showError() {
     if (tbody) {
         tbody.innerHTML = `
             <tr>
-                <td colspan="5" class="empty-cell">
+                <td colspan="6" class="empty-cell">
                     เกิดข้อผิดพลาดในการโหลดข้อมูล
                 </td>
             </tr>
