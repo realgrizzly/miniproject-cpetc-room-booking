@@ -1822,6 +1822,39 @@ if (logoutButton) {
 // จัดการคำขอจองห้อง
 // =====================================
 
+// แสดงวันและเวลาที่ผู้ใช้ส่งคำขอ
+function formatBookingCreatedAt(createdAt) {
+
+    if (!createdAt) {
+        return "-";
+    }
+
+    try {
+        const date =
+            typeof createdAt.toDate === "function"
+                ? createdAt.toDate()
+                : new Date(createdAt);
+
+        if (Number.isNaN(date.getTime())) {
+            return "-";
+        }
+
+        return date.toLocaleString("th-TH", {
+            year: "numeric",
+            month: "2-digit",
+            day: "2-digit",
+            hour: "2-digit",
+            minute: "2-digit",
+            second: "2-digit",
+            hour12: false
+        });
+
+    } catch (error) {
+        console.error("แปลงเวลาคำขอไม่สำเร็จ:", error);
+        return "-";
+    }
+}
+
 async function loadBookings() {
 
     const tbody =
@@ -1837,7 +1870,7 @@ async function loadBookings() {
 
     tbody.innerHTML = `
         <tr>
-            <td colspan="7">
+            <td colspan="8">
                 กำลังโหลดคำขอจอง...
             </td>
         </tr>
@@ -1922,17 +1955,25 @@ async function loadBookings() {
 
 
         // =====================================
-        // เรียงวันที่ / เวลา
+        // เรียงคำขอใหม่สุดขึ้นก่อน
         // =====================================
 
-        allBookings.sort(
-            (a, b) =>
+        allBookings.sort((a, b) => {
 
-                `${b.bookingDate || ""} ${b.startTime || ""}`
-                    .localeCompare(
-                        `${a.bookingDate || ""} ${a.startTime || ""}`
-                    )
-        );
+            const aTime = a.createdAt?.toMillis
+                ? a.createdAt.toMillis()
+                : new Date(
+                    `${a.bookingDate || "1970-01-01"}T${a.startTime || "00:00"}`
+                ).getTime();
+
+            const bTime = b.createdAt?.toMillis
+                ? b.createdAt.toMillis()
+                : new Date(
+                    `${b.bookingDate || "1970-01-01"}T${b.startTime || "00:00"}`
+                ).getTime();
+
+            return bTime - aTime;
+        });
 
 
         renderBookingRequests();
@@ -1948,7 +1989,7 @@ async function loadBookings() {
 
         tbody.innerHTML = `
             <tr>
-                <td colspan="7">
+                <td colspan="8">
                     ไม่สามารถโหลดคำขอจองได้
                 </td>
             </tr>
@@ -2007,7 +2048,7 @@ function renderBookingRequests() {
 
         tbody.innerHTML = `
             <tr>
-                <td colspan="7">
+                <td colspan="8">
                     ไม่พบคำขอจองในสถานะนี้
                 </td>
             </tr>
@@ -2051,7 +2092,11 @@ function renderBookingRequests() {
 
                 `${booking.startTime || "-"} - ${booking.endTime || "-"}`,
 
-                `${booking.people ?? "-"} คน`
+                `${booking.people ?? "-"} คน`,
+
+                formatBookingCreatedAt(
+                    booking.createdAt
+                )
             ];
 
 
@@ -2352,6 +2397,85 @@ document
     ?.addEventListener(
         "click",
         loadBookings
+    );
+
+
+// =====================================
+// เคลียร์คำขอจองทั้งหมด
+// =====================================
+
+async function clearAllBookings() {
+
+    if (!auth.currentUser) {
+        alert("กรุณาเข้าสู่ระบบ");
+        return;
+    }
+
+    if (allBookings.length === 0) {
+        alert("ไม่มีรายการคำขอให้เคลียร์");
+        return;
+    }
+
+    const confirmed = confirm(
+        `ต้องการลบคำขอจองทั้งหมด ${allBookings.length} รายการหรือไม่?\n\n` +
+        "การลบนี้ไม่สามารถย้อนกลับได้"
+    );
+
+    if (!confirmed) {
+        return;
+    }
+
+    const button =
+        document.getElementById("clearAllBookings");
+
+    try {
+
+        if (button) {
+            button.disabled = true;
+            button.innerHTML =
+                '<i class="fa-solid fa-spinner fa-spin"></i> กำลังเคลียร์...';
+        }
+
+        for (const booking of allBookings) {
+            await deleteDoc(
+                doc(db, "bookings", booking.id)
+            );
+        }
+
+        allBookings = [];
+        renderBookingRequests();
+
+        alert("เคลียร์คำขอจองทั้งหมดเรียบร้อยแล้ว");
+
+    } catch (error) {
+
+        console.error(
+            "เคลียร์คำขอจองไม่สำเร็จ:",
+            error
+        );
+
+        alert(
+            "ไม่สามารถเคลียร์รายการได้\n\n" +
+            (error.code || error.message)
+        );
+
+        await loadBookings();
+
+    } finally {
+
+        if (button) {
+            button.disabled = false;
+            button.innerHTML =
+                '<i class="fa-solid fa-trash-can"></i> เคลียร์คำขอทั้งหมด';
+        }
+    }
+}
+
+document
+    .getElementById("clearAllBookings")
+    ?.addEventListener(
+        "click",
+        clearAllBookings
     );
 
     // =====================================================

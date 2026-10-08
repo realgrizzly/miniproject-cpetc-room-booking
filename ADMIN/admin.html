@@ -146,7 +146,7 @@
                                 <i class="fa-solid fa-cloud-arrow-up"></i>
                                 <strong>เลือกรูปห้อง</strong>
                                 <span>คลิกเพื่อเลือกรูปจากเครื่อง</span>
-                                <small>JPG, PNG หรือ WEBP • ไม่เกิน 5MB</small>
+                                <small>JPG, PNG หรือ WEBP • ไม่เกิน 20MB</small>
                             </div>
                             
                             <!-- รูป Preview -->
@@ -290,6 +290,10 @@
             <span class="section-label">REQUESTS FROM USERS</span>
             <h2>จัดการคำขอจองห้อง</h2>
         </div>
+        <button type="button" id="clearAllBookings" class="clear-bookings-button">
+            <i class="fa-solid fa-trash-can"></i>
+            เคลียร์คำขอทั้งหมด
+        </button>
     </div>
 
     <div class="booking-filter">
@@ -314,13 +318,14 @@
                     <th>วันที่จอง</th>
                     <th>เวลา</th>
                     <th>จำนวนคน</th>
+                    <th>ส่งคำขอเมื่อ</th>
                     <th>สถานะ</th>
                     <th>จัดการ</th>
                 </tr>
             </thead>
             <tbody id="bookingRequestsBody">
                 <tr>
-                    <td colspan="7">กำลังโหลดคำขอจอง...</td>
+                    <td colspan="8">กำลังโหลดคำขอจอง...</td>
                 </tr>
             </tbody>
         </table>
