@@ -1049,7 +1049,7 @@ document.addEventListener(
             slideTimer =
                 setInterval(
                     nextSlide,
-                    2000
+                    3000
                 );
 
         }

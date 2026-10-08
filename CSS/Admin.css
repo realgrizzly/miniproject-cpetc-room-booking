@@ -1091,57 +1091,56 @@ body {
 
 /* =====================================================
    ROOM IMAGE UPLOAD
+   ปรับให้เห็นรูปใหญ่ / เห็นรูปเต็ม / ไม่เหลือแต่ placeholder
 ===================================================== */
 
-.room-upload-group {
+.room-upload-group,
+.room-upload-box {
     width: 100%;
 }
 
-
 /* Label */
-
 .room-upload-group > label {
     display: flex;
     align-items: center;
     gap: 8px;
+    color: #d2c6e1;
+    font-size: 12px;
 }
 
 .room-upload-group > label i {
     color: #ff914d;
 }
 
-
-/* กล่องทั้งหมด */
-
+/* กล่องอัปโหลด */
 .room-upload-box {
     width: 100%;
-    margin-top: 8px;
-    padding: 16px;
+    min-height: 520px;
+    margin-top: 7px;
+    padding: 18px;
+
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
 
     box-sizing: border-box;
+    overflow: hidden;
 
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    border-radius: 14px;
+    border: 2px dashed rgba(255, 145, 77, .55);
+    border-radius: 16px;
 
-    background:
-        linear-gradient(
-            145deg,
-            rgba(255, 255, 255, 0.055),
-            rgba(255, 255, 255, 0.025)
-        );
-
-    transition: 0.25s ease;
+    background: rgba(255, 255, 255, .025);
 }
 
-
 /* ==========================================
-   Preview Box
+   พื้นที่ Preview
 ========================================== */
 
-.room-upload-preview {
-
+.room-upload-preview,
+.room-preview-area {
     width: 100%;
-    height: 190px;
+    height: 420px;
+    min-height: 420px;
 
     position: relative;
 
@@ -1150,225 +1149,211 @@ body {
     justify-content: center;
 
     overflow: hidden;
-
     box-sizing: border-box;
 
-    border: 2px dashed
-        rgba(255, 255, 255, 0.18);
-
+    border: 2px dashed rgba(255, 255, 255, .18);
     border-radius: 12px;
 
-    background:
-        rgba(0, 0, 0, 0.12);
+    background: rgba(0, 0, 0, .12);
 
     cursor: pointer;
 
     transition:
-        border-color 0.25s ease,
-        background 0.25s ease,
-        transform 0.25s ease;
+        border-color .25s ease,
+        background .25s ease,
+        transform .25s ease;
 }
 
-
-.room-upload-preview:hover {
-
-    border-color:
-        rgba(255, 145, 77, 0.75);
-
-    background:
-        rgba(255, 145, 77, 0.045);
-
-    transform: translateY(-1px);
+.room-upload-preview:hover,
+.room-preview-area:hover {
+    border-color: rgba(255, 145, 77, .75);
+    background: rgba(255, 145, 77, .045);
 }
-
 
 /* ==========================================
    Placeholder
 ========================================== */
 
-.room-upload-placeholder {
-
-    display: flex;
-
-    flex-direction: column;
-
-    align-items: center;
-
-    justify-content: center;
-
-    text-align: center;
-
-    gap: 6px;
-
-    color:
-        rgba(255, 255, 255, 0.62);
-}
-
-
-.room-upload-placeholder i {
-
-    font-size: 38px;
-
-    margin-bottom: 5px;
-
-    color: #ff914d;
-
-}
-
-
-.room-upload-placeholder strong {
-
-    font-size: 16px;
-
-    font-weight: 600;
-
-    color: #ffffff;
-
-}
-
-
-.room-upload-placeholder span {
-
-    font-size: 13px;
-
-    color:
-        rgba(255, 255, 255, 0.65);
-
-}
-
-
-.room-upload-placeholder small {
-
-    margin-top: 2px;
-
-    font-size: 11px;
-
-    color:
-        rgba(255, 255, 255, 0.42);
-
-}
-
-
-/* ==========================================
-   Preview Image
-========================================== */
-
-#roomImagePreview {
-
+.room-upload-placeholder,
+.room-image-placeholder {
     width: 100%;
     height: 100%;
 
-    object-fit: cover;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
 
-    display: none;
+    text-align: center;
+    gap: 7px;
 
+    color: rgba(255, 255, 255, .62);
 }
 
+.room-upload-placeholder i,
+.room-image-placeholder i {
+    font-size: 42px;
+    margin-bottom: 5px;
+    color: #ff914d;
+}
+
+.room-upload-placeholder strong,
+.room-image-placeholder strong {
+    font-size: 18px;
+    font-weight: 600;
+    color: #fff;
+}
+
+.room-upload-placeholder span,
+.room-image-placeholder span {
+    font-size: 13px;
+    color: rgba(255, 255, 255, .65);
+}
+
+.room-upload-placeholder small,
+.room-image-placeholder small {
+    margin-top: 2px;
+    font-size: 11px;
+    color: rgba(255, 255, 255, .42);
+}
 
 /* ==========================================
-   Choose Image Button
+   รูป Preview
+   เห็นรูปทั้งรูป ไม่ crop
 ========================================== */
 
-.choose-room-image {
+#roomImagePreview {
+    width: 100% !important;
+    height: 100% !important;
 
+    max-width: 100% !important;
+    max-height: 100% !important;
+
+    display: block;
+
+    margin: 0 auto;
+
+    object-fit: contain !important;
+    object-position: center;
+
+    border-radius: 12px;
+
+    background: rgba(0, 0, 0, .12);
+}
+
+/* ถ้า HTML ใช้ class นี้แทน id */
+.room-upload-preview img,
+.room-preview-area img {
     width: 100%;
+    height: 100%;
+    max-width: 100%;
+    max-height: 100%;
 
-    height: 44px;
+    display: block;
 
-    margin-top: 13px;
+    object-fit: contain;
+    object-position: center;
 
-    border: 1px solid
-        rgba(255, 145, 77, 0.45);
+    border-radius: 12px;
+}
 
+/* ==========================================
+   ปุ่มเลือกไฟล์
+========================================== */
+
+.choose-room-image,
+.room-upload-button {
+    width: 100%;
+    min-height: 48px;
+    height: 48px;
+
+    margin-top: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+
+    box-sizing: border-box;
+
+    border: 1px solid rgba(255, 145, 77, .45);
     border-radius: 9px;
 
-    background:
-        rgba(255, 145, 77, 0.08);
+    background: rgba(255, 145, 77, .08);
 
     color: #ffad78;
 
     font-family: inherit;
-
     font-size: 13px;
-
     font-weight: 600;
 
     cursor: pointer;
 
-    transition: all 0.25s ease;
-
+    transition: all .25s ease;
 }
 
-
-.choose-room-image i {
-
-    margin-right: 7px;
-
-}
-
-
-.choose-room-image:hover {
-
-    background:
-        linear-gradient(
-            135deg,
-            #ff914d,
-            #ff7138
-        );
-
+.choose-room-image:hover,
+.room-upload-button:hover {
+    background: linear-gradient(135deg, #ff914d, #ff7138);
     border-color: #ff914d;
+    color: #fff;
 
-    color: #ffffff;
-
-    box-shadow:
-        0 6px 18px
-        rgba(255, 113, 56, 0.22);
-
+    box-shadow: 0 6px 18px rgba(255, 113, 56, .22);
     transform: translateY(-1px);
-
 }
 
+.choose-room-image i,
+.room-upload-button i {
+    margin-right: 2px;
+}
 
 /* ==========================================
-   Selected File
+   ชื่อไฟล์
 ========================================== */
 
-.selected-room-file {
+.selected-room-file,
+.room-file-name {
+    width: 100%;
+    min-height: 24px;
 
     display: flex;
-
     align-items: center;
-
     gap: 8px;
 
-    min-height: 20px;
-
-    margin-top: 10px;
-
+    margin-top: 0;
     padding: 0 2px;
 
+    box-sizing: border-box;
+
     font-size: 12px;
-
-    color:
-        rgba(255, 255, 255, 0.45);
-
+    color: rgba(255, 255, 255, .45);
 }
 
-
-.selected-room-file i {
-
+.selected-room-file i,
+.room-file-name i {
+    flex-shrink: 0;
     color: #ff914d;
-
 }
 
-
-.selected-room-file.has-file {
-
-    color:
-        rgba(255, 255, 255, 0.85);
-
+.selected-room-file.has-file,
+.room-file-name.has-file {
+    color: rgba(255, 255, 255, .85);
 }
 
+.selected-room-file span,
+.room-file-name span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* ==========================================
+   Input file
+========================================== */
+
+#roomImage {
+    display: none;
+}
 
 /* ==========================================
    Responsive
@@ -1377,15 +1362,133 @@ body {
 @media (max-width: 700px) {
 
     .room-upload-box {
-
+        min-height: 360px;
         padding: 12px;
-
     }
 
-    .room-upload-preview {
-
-        height: 160px;
-
+    .room-upload-preview,
+    .room-preview-area {
+        height: 280px;
+        min-height: 280px;
     }
 
+    #roomImagePreview,
+    .room-upload-preview img,
+    .room-preview-area img {
+        max-height: 280px;
+    }
+
+}
+
+
+
+/* =====================================================
+   ROOM IMAGE PREVIEW - จัดให้อยู่กึ่งกลาง
+===================================================== */
+
+/* ให้พื้นที่ Preview เป็นจุดอ้างอิง */
+.room-upload-box {
+    position: relative;
+}
+
+/* พื้นที่รูปหลัก */
+.room-upload-preview,
+.room-preview-area {
+    position: relative;
+    width: 100%;
+    height: 420px;
+    min-height: 420px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* รูปตัวอย่างอยู่ตรงกลางพอดี */
+.room-upload-preview #roomImagePreview,
+.room-preview-area #roomImagePreview {
+    position: absolute;
+
+    top: 50%;
+    left: 50%;
+
+    width: 100% !important;
+    height: 100% !important;
+
+    max-width: 100% !important;
+    max-height: 100% !important;
+
+    transform: translate(-50%, -50%);
+
+    object-fit: contain !important;
+    object-position: center center !important;
+
+    margin: 0 !important;
+    display: block;
+}
+
+/* ถ้ารูป preview ถูกวางอยู่นอก preview box
+   ก็ให้จัดกลางในกล่อง upload */
+.room-upload-box > #roomImagePreview {
+    position: absolute;
+
+    top: 18px;
+    left: 50%;
+
+    width: calc(100% - 36px) !important;
+    height: 420px !important;
+
+    max-width: calc(100% - 36px) !important;
+    max-height: 420px !important;
+
+    transform: translateX(-50%);
+
+    object-fit: contain !important;
+    object-position: center center !important;
+
+    margin: 0 !important;
+    border-radius: 12px;
+}
+
+/* Placeholder ให้อยู่กึ่งกลางแน่นอน */
+.room-upload-placeholder,
+.room-image-placeholder {
+    position: absolute;
+
+    top: 50%;
+    left: 50%;
+
+    transform: translate(-50%, -50%);
+
+    width: 100%;
+    height: 100%;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* อย่าให้ placeholder ไปทับรูป */
+.room-upload-preview:has(#roomImagePreview[src]:not([src=""])) .room-upload-placeholder,
+.room-preview-area:has(#roomImagePreview[src]:not([src=""])) .room-upload-placeholder {
+    display: none;
+}
+
+/* รูปที่ยังไม่มี src ไม่ต้องแสดง broken image */
+#roomImagePreview[src=""],
+#roomImagePreview:not([src]) {
+    display: none !important;
+}
+
+/* ชื่อไฟล์จัดกึ่งกลาง */
+.selected-room-file,
+.room-file-name {
+    justify-content: center;
+    text-align: center;
+}
+
+/* ปุ่มเลือกไฟล์ยังอยู่กึ่งกลาง */
+.choose-room-image,
+.room-upload-button {
+    align-self: center;
 }

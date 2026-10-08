@@ -2447,7 +2447,7 @@ if (roomImageInput) {
 
             if (
                 file.size >
-                5 * 1024 * 1024
+                20 * 1024 * 1024
             ) {
 
                 alert(
