@@ -2060,14 +2060,17 @@ function renderBookingRequests() {
 
     const statusLabels = {
 
-        pending:
-            "รออนุมัติ",
+    pending:
+        "รออนุมัติ",
 
-        approved:
-            "อนุมัติแล้ว",
+    approved:
+        "อนุมัติแล้ว",
 
-        rejected:
-            "ปฏิเสธแล้ว"
+    rejected:
+        "ปฏิเสธแล้ว",
+
+    cancelled:
+        "ยกเลิกโดยผู้ใช้"
     };
 
 
